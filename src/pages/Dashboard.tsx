@@ -42,9 +42,10 @@ export default function Dashboard() {
       {/* TOP NAV */}
       <nav className="flex items-center px-7 h-14 border-b border-border bg-card sticky top-0 z-50 backdrop-blur-xl">
         <Link to="/" className="flex items-center gap-2.5 mr-10">
-          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" className="shrink-0">
-            <path d="M14 3L26 25H2L14 3Z" stroke="hsl(43 56% 54%)" strokeWidth="2" fill="none" />
-            <path d="M14 10L20 22H8L14 10Z" fill="hsl(43 56% 54%)" fillOpacity="0.3" />
+          <svg width="28" height="28" viewBox="0 0 32 32" fill="none" className="shrink-0">
+            {/* Stylized A letter — pointed top, open legs, crossbar */}
+            <path d="M16 3L28 28H23.5L20.5 21H11.5L8.5 28H4L16 3Z" fill="hsl(43 56% 54%)" />
+            <path d="M13 17.5H19L16 10L13 17.5Z" fill="hsl(260 18% 5%)" />
           </svg>
           <span className="font-display text-lg font-bold tracking-widest">АМОС</span>
         </Link>
