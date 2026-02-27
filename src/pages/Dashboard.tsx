@@ -42,9 +42,10 @@ export default function Dashboard() {
       {/* TOP NAV */}
       <nav className="flex items-center px-7 h-14 border-b border-border bg-card sticky top-0 z-50 backdrop-blur-xl">
         <Link to="/" className="flex items-center gap-2.5 mr-10">
-          <div className="w-7 h-7 rounded-md bg-gradient-to-br from-primary to-accent-dim flex items-center justify-center font-extrabold text-sm text-primary-foreground shadow-[0_2px_10px_rgba(201,168,76,0.12)]">
-            A
-          </div>
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" className="shrink-0">
+            <path d="M14 3L26 25H2L14 3Z" stroke="hsl(43 56% 54%)" strokeWidth="2" fill="none" />
+            <path d="M14 10L20 22H8L14 10Z" fill="hsl(43 56% 54%)" fillOpacity="0.3" />
+          </svg>
           <span className="font-display text-lg font-bold tracking-widest">АМОС</span>
         </Link>
 
