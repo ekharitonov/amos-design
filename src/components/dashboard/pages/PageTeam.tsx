@@ -5,8 +5,10 @@ export default function PageTeam() {
   const [hovRow, setHovRow] = useState<number | null>(null);
   return (
     <div className="animate-fade-in">
-      <h2 className="font-display text-[22px] font-bold mb-6">Команда</h2>
-      <div className="bg-surface border border-border rounded-xl overflow-hidden">
+      <h2 className="font-display text-lg sm:text-[22px] font-bold mb-4 sm:mb-6">Команда</h2>
+      
+      {/* Desktop table */}
+      <div className="hidden sm:block bg-surface border border-border rounded-xl overflow-hidden">
         <table className="w-full border-collapse text-[13px]">
           <thead>
             <tr className="border-b border-border">
@@ -41,6 +43,39 @@ export default function PageTeam() {
             ))}
           </tbody>
         </table>
+      </div>
+
+      {/* Mobile cards */}
+      <div className="sm:hidden flex flex-col gap-3">
+        {team.map((p, i) => (
+          <div key={i} className="bg-surface border border-border rounded-xl p-4">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-9 h-9 rounded-lg bg-surface-2 flex items-center justify-center text-xs font-bold text-primary border border-border shrink-0">
+                {p.name.split(" ").map(w => w[0]).join("")}
+              </div>
+              <div>
+                <div className="text-sm font-medium text-foreground">{p.name}</div>
+                <div className="text-[11px] text-text-dim">{p.role}</div>
+              </div>
+            </div>
+            <div className="grid grid-cols-3 gap-2 text-center">
+              <div className="bg-card rounded-lg p-2 border border-border/50">
+                <div className="text-[10px] text-muted-foreground uppercase font-mono-brand mb-1">Mask</div>
+                <span className={`text-sm font-bold font-mono-brand ${
+                  p.mask > 6 ? "text-amos-red" : p.mask > 4 ? "text-primary" : "text-amos-green"
+                }`}>{p.mask}</span>
+              </div>
+              <div className="bg-card rounded-lg p-2 border border-border/50">
+                <div className="text-[10px] text-muted-foreground uppercase font-mono-brand mb-1">Found</div>
+                <span className="text-sm font-bold font-mono-brand text-amos-blue">{p.found}</span>
+              </div>
+              <div className="bg-card rounded-lg p-2 border border-border/50">
+                <div className="text-[10px] text-muted-foreground uppercase font-mono-brand mb-1">Мосты</div>
+                <span className="text-sm font-bold font-mono-brand text-primary">{p.br}</span>
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
