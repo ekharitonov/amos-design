@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 
 const Hero = () => {
   return (
@@ -53,15 +54,25 @@ const Hero = () => {
           АМОС анализирует реальные коммуникации команды — не анкеты, не мнения, а&nbsp;то, что люди делают каждый день. И&nbsp;показывает то, что обычно невидимо: маски, разрывы, настоящие связи.
         </motion.p>
 
-        <motion.a
-          href="#contact"
-          className="inline-flex items-center gap-2.5 px-9 py-3.5 bg-primary text-primary-foreground font-semibold text-[0.95em] tracking-wide rounded-lg transition-all duration-300 hover:-translate-y-0.5 hover:glow-accent"
+        <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8, duration: 0.5 }}
+          className="flex gap-4 justify-center flex-wrap"
         >
-          Запросить демо →
-        </motion.a>
+          <Link
+            to="/app"
+            className="inline-flex items-center gap-2.5 px-9 py-3.5 bg-primary text-primary-foreground font-semibold text-[0.95em] tracking-wide rounded-lg transition-all duration-300 hover:-translate-y-0.5 hover:glow-accent"
+          >
+            Открыть дашборд →
+          </Link>
+          <a
+            href="#contact"
+            className="inline-flex items-center gap-2.5 px-9 py-3.5 border border-border text-foreground font-semibold text-[0.95em] tracking-wide rounded-lg transition-all duration-300 hover:border-primary hover:text-primary"
+          >
+            Запросить демо
+          </a>
+        </motion.div>
       </motion.div>
     </div>
   );
