@@ -1,14 +1,23 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import Hero from "@/components/amos/Hero";
+import ProblemSection from "@/components/amos/ProblemSection";
+import HowItWorks from "@/components/amos/HowItWorks";
+import LayersSection from "@/components/amos/LayersSection";
+import ComparisonSection from "@/components/amos/ComparisonSection";
+import UseCasesSection from "@/components/amos/UseCasesSection";
+import PrinciplesAndTech from "@/components/amos/PrinciplesAndTech";
+import QuoteAndFooter from "@/components/amos/QuoteAndFooter";
 
-const Index = () => {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
-    </div>
-  );
-};
+const Index = () => (
+  <div className="min-h-screen bg-background">
+    <Hero />
+    <ProblemSection />
+    <HowItWorks />
+    <LayersSection />
+    <ComparisonSection />
+    <UseCasesSection />
+    <PrinciplesAndTech />
+    <QuoteAndFooter />
+  </div>
+);
 
 export default Index;
