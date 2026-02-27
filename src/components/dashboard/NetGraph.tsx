@@ -61,16 +61,25 @@ export default function NetGraph({ onSelectEdge, selectedEdgeKey }: NetGraphProp
         }
 
         return (
-          <line key={i} x1={a.x} y1={a.y} x2={b.x} y2={b.y}
-            stroke={stroke}
-            strokeWidth={width}
-            filter={filter}
-            className="cursor-pointer"
-            style={{ transition: "stroke 0.2s, stroke-width 0.2s" }}
-            onMouseEnter={() => setHovEdge(i)}
-            onMouseLeave={() => setHovEdge(null)}
-            onClick={() => onSelectEdge?.(e, key)}
-          />
+          <g key={i}>
+            {/* Invisible fat hit area for easier clicking */}
+            <line x1={a.x} y1={a.y} x2={b.x} y2={b.y}
+              stroke="transparent"
+              strokeWidth={14}
+              className="cursor-pointer"
+              onMouseEnter={() => setHovEdge(i)}
+              onMouseLeave={() => setHovEdge(null)}
+              onClick={() => onSelectEdge?.(e, key)}
+            />
+            {/* Visible edge */}
+            <line x1={a.x} y1={a.y} x2={b.x} y2={b.y}
+              stroke={stroke}
+              strokeWidth={width}
+              filter={filter}
+              className="pointer-events-none"
+              style={{ transition: "stroke 0.2s, stroke-width 0.2s" }}
+            />
+          </g>
         );
       })}
 
