@@ -1,5 +1,5 @@
-import { useState, useCallback } from "react";
-import { nodes, nodeMap, edges, EdgeData } from "./DashboardData";
+import { useState, useCallback, useRef, useEffect } from "react";
+import { nodes as initialNodes, edges, EdgeData } from "./DashboardData";
 
 // Avatar imports
 import avatarA1 from "@/assets/avatars/alexey-p.jpg";
@@ -22,16 +22,82 @@ interface NetGraphProps {
   selectedEdgeKey?: string | null;
 }
 
+type NodePos = { id: string; n: string; x: number; y: number; r: number; hi?: boolean };
+
 export default function NetGraph({ onSelectEdge, selectedEdgeKey }: NetGraphProps) {
   const [hovEdge, setHovEdge] = useState<number | null>(null);
   const [hovNode, setHovNode] = useState<string | null>(null);
+  const [nodePositions, setNodePositions] = useState<NodePos[]>(() =>
+    initialNodes.map(n => ({ ...n }))
+  );
+  const [dragId, setDragId] = useState<string | null>(null);
+  const svgRef = useRef<SVGSVGElement>(null);
+  const dragStart = useRef<{ ox: number; oy: number; mx: number; my: number } | null>(null);
+
+  const nodeMap = useRef<Record<string, NodePos>>({});
+  useEffect(() => {
+    const map: Record<string, NodePos> = {};
+    nodePositions.forEach(n => { map[n.id] = n; });
+    nodeMap.current = map;
+  }, [nodePositions]);
 
   const getEdgeKey = useCallback((e: EdgeData) => {
     return [e.a, e.b].sort().join("-");
   }, []);
 
+  const getSVGPoint = useCallback((clientX: number, clientY: number) => {
+    const svg = svgRef.current;
+    if (!svg) return { x: 0, y: 0 };
+    const pt = svg.createSVGPoint();
+    pt.x = clientX;
+    pt.y = clientY;
+    const ctm = svg.getScreenCTM();
+    if (!ctm) return { x: 0, y: 0 };
+    const svgPt = pt.matrixTransform(ctm.inverse());
+    return { x: svgPt.x, y: svgPt.y };
+  }, []);
+
+  const handlePointerDown = useCallback((id: string, e: React.PointerEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const node = nodeMap.current[id];
+    if (!node) return;
+    const svgPt = getSVGPoint(e.clientX, e.clientY);
+    dragStart.current = { ox: node.x, oy: node.y, mx: svgPt.x, my: svgPt.y };
+    setDragId(id);
+    (e.target as SVGElement).setPointerCapture(e.pointerId);
+  }, [getSVGPoint]);
+
+  const handlePointerMove = useCallback((e: React.PointerEvent) => {
+    if (!dragId || !dragStart.current) return;
+    const svgPt = getSVGPoint(e.clientX, e.clientY);
+    const dx = svgPt.x - dragStart.current.mx;
+    const dy = svgPt.y - dragStart.current.my;
+    const newX = Math.max(30, Math.min(570, dragStart.current.ox + dx));
+    const newY = Math.max(30, Math.min(510, dragStart.current.oy + dy));
+
+    setNodePositions(prev =>
+      prev.map(n => n.id === dragId ? { ...n, x: newX, y: newY } : n)
+    );
+  }, [dragId, getSVGPoint]);
+
+  const handlePointerUp = useCallback(() => {
+    setDragId(null);
+    dragStart.current = null;
+  }, []);
+
+  const nMap = nodeMap.current;
+
   return (
-    <svg viewBox="0 0 600 540" className="w-full h-auto" style={{ maxHeight: 520 }}>
+    <svg
+      ref={svgRef}
+      viewBox="0 0 600 540"
+      className="w-full h-auto select-none"
+      style={{ maxHeight: 520, touchAction: "none" }}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+      onPointerLeave={handlePointerUp}
+    >
       <defs>
         <filter id="edgeGlow">
           <feGaussianBlur stdDeviation="3" result="b" />
@@ -57,8 +123,8 @@ export default function NetGraph({ onSelectEdge, selectedEdgeKey }: NetGraphProp
           <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
         </filter>
 
-        {/* Clip paths for each node */}
-        {nodes.map(nd => (
+        {/* Clip paths — dynamic positions */}
+        {nodePositions.map(nd => (
           <clipPath key={`clip-${nd.id}`} id={`clip-${nd.id}`}>
             <circle cx={nd.x} cy={nd.y} r={nd.r - 1} />
           </clipPath>
@@ -71,7 +137,8 @@ export default function NetGraph({ onSelectEdge, selectedEdgeKey }: NetGraphProp
 
       {/* Edges */}
       {edges.map((e, i) => {
-        const a = nodeMap[e.a], b = nodeMap[e.b];
+        const a = nMap[e.a], b = nMap[e.b];
+        if (!a || !b) return null;
         const key = getEdgeKey(e);
         const isActive = e.active;
         const isSelected = selectedEdgeKey === key;
@@ -101,7 +168,7 @@ export default function NetGraph({ onSelectEdge, selectedEdgeKey }: NetGraphProp
             <line x1={a.x} y1={a.y} x2={b.x} y2={b.y}
               stroke={stroke} strokeWidth={width} filter={filter}
               className="pointer-events-none"
-              style={{ transition: "stroke 0.2s, stroke-width 0.2s" }}
+              style={{ transition: dragId ? "none" : "stroke 0.2s, stroke-width 0.2s" }}
             />
           </g>
         );
@@ -111,7 +178,8 @@ export default function NetGraph({ onSelectEdge, selectedEdgeKey }: NetGraphProp
       {(() => {
         const activeEdge = edges.find(e => e.active);
         if (!activeEdge) return null;
-        const a = nodeMap[activeEdge.a], b = nodeMap[activeEdge.b];
+        const a = nMap[activeEdge.a], b = nMap[activeEdge.b];
+        if (!a || !b) return null;
         const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
         return (
           <g>
@@ -127,38 +195,41 @@ export default function NetGraph({ onSelectEdge, selectedEdgeKey }: NetGraphProp
       })()}
 
       {/* Nodes with avatars */}
-      {nodes.map(nd => {
+      {nodePositions.map(nd => {
         const isHov = hovNode === nd.id;
+        const isDragging = dragId === nd.id;
         const isInSelected = selectedEdgeKey?.includes(nd.id);
-        const showGlow = nd.hi || isHov || isInSelected;
+        const showGlow = nd.hi || isHov || isInSelected || isDragging;
         const avatar = avatarMap[nd.id];
 
         return (
-          <g key={nd.id} className="cursor-pointer"
-            onMouseEnter={() => setHovNode(nd.id)}
-            onMouseLeave={() => setHovNode(null)}>
-
+          <g key={nd.id}
+            className={isDragging ? "cursor-grabbing" : "cursor-grab"}
+            onMouseEnter={() => !dragId && setHovNode(nd.id)}
+            onMouseLeave={() => !dragId && setHovNode(null)}
+            onPointerDown={(e) => handlePointerDown(nd.id, e)}
+          >
             {/* Outer glow ring */}
             {showGlow && (
               <circle cx={nd.x} cy={nd.y} r={nd.r + 7}
                 fill="none"
-                stroke={nd.hi || isInSelected ? "hsl(43 56% 54%)" : "hsl(213 47% 57%)"}
-                strokeWidth={1.5}
-                filter={nd.hi ? "url(#nodePulse)" : "url(#nodeGlow)"}
-                opacity={isHov ? 1 : 0.6}
-                style={{ transition: "opacity 0.2s" }}
+                stroke={isDragging ? "hsl(213 47% 57%)" : nd.hi || isInSelected ? "hsl(43 56% 54%)" : "hsl(213 47% 57%)"}
+                strokeWidth={isDragging ? 2 : 1.5}
+                filter={nd.hi && !isDragging ? "url(#nodePulse)" : "url(#nodeGlow)"}
+                opacity={isHov || isDragging ? 1 : 0.6}
+                style={{ transition: dragId ? "none" : "opacity 0.2s" }}
               >
-                {nd.hi && <animate attributeName="opacity" values="0.4;0.8;0.4" dur="2s" repeatCount="indefinite" />}
+                {nd.hi && !isDragging && <animate attributeName="opacity" values="0.4;0.8;0.4" dur="2s" repeatCount="indefinite" />}
               </circle>
             )}
 
             {/* Border circle */}
             <circle cx={nd.x} cy={nd.y} r={nd.r}
               fill="hsl(255 17% 14%)"
-              stroke={nd.hi || isInSelected ? "hsl(43 56% 54%)" : isHov ? "hsl(213 47% 57%)" : "hsl(255 12% 24%)"}
-              strokeWidth={nd.hi || isInSelected ? 2.5 : 1.5}
+              stroke={isDragging ? "hsl(213 47% 57%)" : nd.hi || isInSelected ? "hsl(43 56% 54%)" : isHov ? "hsl(213 47% 57%)" : "hsl(255 12% 24%)"}
+              strokeWidth={isDragging ? 3 : nd.hi || isInSelected ? 2.5 : 1.5}
               filter="url(#avatarShadow)"
-              style={{ transition: "stroke 0.2s, stroke-width 0.2s" }}
+              style={{ transition: dragId ? "none" : "stroke 0.2s, stroke-width 0.2s" }}
             />
 
             {/* Avatar photo */}
@@ -177,9 +248,9 @@ export default function NetGraph({ onSelectEdge, selectedEdgeKey }: NetGraphProp
 
             {/* Name label */}
             <text x={nd.x} y={nd.y + nd.r + 18} textAnchor="middle"
-              fill={isHov || isInSelected ? "hsl(253 30% 92%)" : "hsl(252 10% 58%)"}
+              fill={isHov || isInSelected || isDragging ? "hsl(253 30% 92%)" : "hsl(252 10% 58%)"}
               fontSize={11} fontWeight={isInSelected ? 600 : 400}
-              style={{ transition: "fill 0.2s", pointerEvents: "none", fontFamily: "'Source Sans 3', sans-serif" }}>
+              style={{ transition: dragId ? "none" : "fill 0.2s", pointerEvents: "none", fontFamily: "'Source Sans 3', sans-serif" }}>
               {nd.n}
             </text>
           </g>
