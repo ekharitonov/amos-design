@@ -27,27 +27,89 @@ export const realData = [
 ];
 
 export const nodes = [
-  { id: "a1", n: "Алексей П.", x: 195, y: 175, r: 24, hi: true },
-  { id: "ms", n: "Мария С.", x: 375, y: 310, r: 24, hi: true },
-  { id: "ss", n: "Сидоров С.", x: 335, y: 90, r: 18 },
-  { id: "ma", n: "Мария А.", x: 465, y: 100, r: 16 },
-  { id: "vn", n: "Валерия Н.", x: 110, y: 305, r: 17 },
-  { id: "a2", n: "Алексей П.", x: 270, y: 430, r: 17 },
-  { id: "ys", n: "Юсниан С.", x: 150, y: 420, r: 15 },
-  { id: "ad", n: "Алениев D.", x: 365, y: 460, r: 15 },
-  { id: "ls", n: "Лания С.", x: 480, y: 430, r: 15 },
+  { id: "a1", n: "Алексей П.", x: 195, y: 175, r: 28, hi: true },
+  { id: "ms", n: "Мария С.", x: 375, y: 310, r: 28, hi: true },
+  { id: "ss", n: "Сидоров С.", x: 335, y: 90, r: 22 },
+  { id: "ma", n: "Мария А.", x: 465, y: 100, r: 20 },
+  { id: "vn", n: "Валерия Н.", x: 110, y: 305, r: 22 },
+  { id: "a2", n: "Алексей П.", x: 270, y: 430, r: 22 },
+  { id: "ys", n: "Юсниан С.", x: 150, y: 420, r: 20 },
+  { id: "ad", n: "Алениев D.", x: 365, y: 460, r: 20 },
+  { id: "ls", n: "Лания С.", x: 480, y: 430, r: 20 },
 ];
 
 export const nodeMap: Record<string, typeof nodes[0]> = {};
 nodes.forEach(n => { nodeMap[n.id] = n; });
 
-export const edges = [
+export interface EdgeData {
+  a: string;
+  b: string;
+  active?: boolean;
+}
+
+export const edges: EdgeData[] = [
   { a: "a1", b: "ms", active: true }, { a: "a1", b: "ss" }, { a: "a1", b: "vn" },
   { a: "a1", b: "ma" }, { a: "ms", b: "ma" }, { a: "ms", b: "ad" },
   { a: "ms", b: "ls" }, { a: "ss", b: "ma" }, { a: "vn", b: "ys" },
   { a: "vn", b: "a2" }, { a: "a2", b: "ad" }, { a: "a2", b: "ys" },
   { a: "a1", b: "a2" }, { a: "ms", b: "ss" },
 ];
+
+export interface BridgeDetail {
+  edgeKey: string;
+  personA: string;
+  personB: string;
+  tension: string;
+  tensionLevel: "low" | "medium" | "high";
+  gives: { who: string; items: string[] }[];
+}
+
+export const bridgeDetails: Record<string, BridgeDetail> = {
+  "a1-ms": {
+    edgeKey: "a1-ms",
+    personA: "Алексей П.",
+    personB: "Мария С.",
+    tension: "Среднее",
+    tensionLevel: "medium",
+    gives: [
+      { who: "Алексей даёт Марии:", items: ["Стратегическое видение", "Защита от внешнего давления"] },
+      { who: "Мария даёт Алексею:", items: ["Детализация задач", "Честная обратная связь"] },
+    ],
+  },
+  "a1-ss": {
+    edgeKey: "a1-ss",
+    personA: "Алексей П.",
+    personB: "Сидоров С.",
+    tension: "Низкое",
+    tensionLevel: "low",
+    gives: [
+      { who: "Алексей даёт Сидорову:", items: ["Приоритизация задач", "Контекст бизнеса"] },
+      { who: "Сидоров даёт Алексею:", items: ["Визуальные решения", "UX-экспертиза"] },
+    ],
+  },
+  "ms-ma": {
+    edgeKey: "ms-ma",
+    personA: "Мария С.",
+    personB: "Мария А.",
+    tension: "Высокое",
+    tensionLevel: "high",
+    gives: [
+      { who: "Мария С. даёт Марии А.:", items: ["Техническое менторство", "Код-ревью"] },
+      { who: "Мария А. даёт Марии С.:", items: ["Свежий взгляд", "Документация"] },
+    ],
+  },
+  "vn-a2": {
+    edgeKey: "vn-a2",
+    personA: "Валерия Н.",
+    personB: "Алексей П.",
+    tension: "Низкое",
+    tensionLevel: "low",
+    gives: [
+      { who: "Валерия даёт Алексею:", items: ["Контроль качества", "Тест-кейсы"] },
+      { who: "Алексей даёт Валерии:", items: ["Архитектурный контекст", "Приоритеты багов"] },
+    ],
+  },
+};
 
 export const team = [
   { name: "Алексей Петров", role: "Product Owner", mask: 8.2, found: 6.8, br: 4 },
