@@ -7,7 +7,7 @@ import { pulseData, insightsData } from "../DashboardData";
 export default function PageMain() {
   return (
     <div className="flex flex-col gap-4 animate-fade-in">
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_310px] gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-4">
         {/* Team Pulse */}
         <div className="bg-surface border border-border rounded-xl p-5 pb-3">
           <div className="flex justify-between items-center mb-4">
