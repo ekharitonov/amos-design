@@ -37,12 +37,24 @@ export default function NetGraph({ onSelectEdge, selectedEdgeKey }: NetGraphProp
           <feGaussianBlur stdDeviation="3" result="b" />
           <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
         </filter>
+        <filter id="edgePulse">
+          <feGaussianBlur stdDeviation="4" result="b">
+            <animate attributeName="stdDeviation" values="2;5;2" dur="2s" repeatCount="indefinite" />
+          </feGaussianBlur>
+          <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
+        </filter>
         <filter id="nodeGlow">
           <feGaussianBlur stdDeviation="5" result="b" />
           <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
         </filter>
         <filter id="avatarShadow">
           <feDropShadow dx="0" dy="2" stdDeviation="4" floodColor="rgba(0,0,0,0.6)" />
+        </filter>
+        <filter id="nodePulse">
+          <feGaussianBlur stdDeviation="5" result="b">
+            <animate attributeName="stdDeviation" values="3;7;3" dur="2s" repeatCount="indefinite" />
+          </feGaussianBlur>
+          <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
         </filter>
 
         {/* Clip paths for each node */}
@@ -73,7 +85,7 @@ export default function NetGraph({ onSelectEdge, selectedEdgeKey }: NetGraphProp
         if (isActive || isSelected) {
           stroke = "hsl(43 56% 54%)";
           width = 3;
-          filter = "url(#edgeGlow)";
+          filter = isActive ? "url(#edgePulse)" : "url(#edgeGlow)";
         } else if (isHov || isConnectedToHov) {
           stroke = "hsl(213 47% 57%)";
           width = 1.8;
@@ -132,10 +144,12 @@ export default function NetGraph({ onSelectEdge, selectedEdgeKey }: NetGraphProp
                 fill="none"
                 stroke={nd.hi || isInSelected ? "hsl(43 56% 54%)" : "hsl(213 47% 57%)"}
                 strokeWidth={1.5}
-                filter="url(#nodeGlow)"
+                filter={nd.hi ? "url(#nodePulse)" : "url(#nodeGlow)"}
                 opacity={isHov ? 1 : 0.6}
                 style={{ transition: "opacity 0.2s" }}
-              />
+              >
+                {nd.hi && <animate attributeName="opacity" values="0.4;0.8;0.4" dur="2s" repeatCount="indefinite" />}
+              </circle>
             )}
 
             {/* Border circle */}
