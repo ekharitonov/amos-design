@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import brainImg from "@/assets/brain-core.png";
 
 /* ─── Integrations ─── */
 interface Integration {
@@ -218,7 +219,7 @@ export default function PageDataFlow() {
             {/* Inner ring */}
             <circle cx={coreX} cy={coreY} r="48" fill="none" stroke="#3B82F6" strokeWidth="0.5" opacity="0.2" />
             {/* Brain */}
-            <text x={coreX} y={coreY + 8} textAnchor="middle" fontSize="46">🧠</text>
+            <image href={brainImg} x={coreX - 32} y={coreY - 32} width="64" height="64" />
             {/* Labels */}
             <text x={coreX} y={coreY + 78} textAnchor="middle"
               fill="#E8E8F0" fontSize="16" fontWeight="700" fontFamily="'Playfair Display', serif">
