@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 /* ─── Integration sources ─── */
@@ -8,25 +8,23 @@ interface Integration {
   status: "ok" | "processing" | "error";
   statusText: string;
   color: string;
+  glowColor: string;
 }
 
 const integrations: Integration[] = [
-  { name: "Slack", icon: "💬", status: "ok", statusText: "Подключено: 15 мин назад (OK)", color: "hsl(213 47% 57%)" },
-  { name: "Jira", icon: "📋", status: "ok", statusText: "Подключено: 10 мин назад (OK)", color: "hsl(213 47% 57%)" },
-  { name: "Zoom", icon: "🎥", status: "processing", statusText: "Синхронизация... (Processing)", color: "hsl(43 56% 54%)" },
-  { name: "Corporate Email", icon: "✉️", status: "error", statusText: "Ошибка доступа (Red Error)", color: "hsl(0 47% 56%)" },
+  { name: "Slack", icon: "💬", status: "ok", statusText: "Подключено: 15 мин назад (OK)", color: "#4A9FE5", glowColor: "rgba(74,159,229,0.6)" },
+  { name: "Jira", icon: "📋", status: "ok", statusText: "Подключено: 10 мин назад (OK)", color: "#4A9FE5", glowColor: "rgba(74,159,229,0.6)" },
+  { name: "Zoom", icon: "🎥", status: "processing", statusText: "Синхронизация... (Processing)", color: "#C9A84C", glowColor: "rgba(201,168,76,0.5)" },
+  { name: "Corporate Email", icon: "✉️", status: "error", statusText: "Ошибка доступа (Red Error)", color: "#D45555", glowColor: "rgba(212,85,85,0.4)" },
 ];
 
-const statusIcon = { ok: "✅", processing: "ℹ️", error: "⚠️" };
-const statusColor = { ok: "text-green", processing: "text-primary", error: "text-destructive" };
+const statusDot = { ok: "#4CAF50", processing: "#C9A84C", error: "#D45555" };
 
 /* ─── Activity log ─── */
 const logEntries = [
-  { time: "10:45:23", tag: "INFO", color: "text-green", text: "Slack integration: New messages fetched (358)." },
-  { time: "10:42:10", tag: "WARN", color: "text-primary", text: "Jira integration: API rate limit approaching." },
-  { time: "10:40:01", tag: "ERROR", color: "text-destructive", text: "Corporate Email integration: Connection timeout. Retrying..." },
-  { time: "10:38:55", tag: "INFO", color: "text-green", text: "Zoom integration: Meeting transcripts synced (12 new)." },
-  { time: "10:35:02", tag: "INFO", color: "text-green", text: "Pattern engine: 32 new behavioral patterns detected." },
+  { time: "10:45:23", tag: "INFO", color: "#4CAF50", text: "Slack integration: New messages fetched (358)." },
+  { time: "10:42:10", tag: "WARN", color: "#C9A84C", text: "Jira integration: API rate limit approaching." },
+  { time: "10:40:01", tag: "ERROR", color: "#D45555", text: "Corporate Email integration: Connection timeout. Retrying..." },
 ];
 
 /* ─── Animated counter ─── */
@@ -35,7 +33,7 @@ function Counter({ target, label }: { target: number; label: string }) {
   useEffect(() => {
     let frame: number;
     const start = performance.now();
-    const dur = 1800;
+    const dur = 2000;
     const tick = (now: number) => {
       const p = Math.min((now - start) / dur, 1);
       const ease = 1 - Math.pow(1 - p, 3);
@@ -46,41 +44,12 @@ function Counter({ target, label }: { target: number; label: string }) {
     return () => cancelAnimationFrame(frame);
   }, [target]);
   return (
-    <div className="flex justify-between items-baseline gap-4">
-      <span className="text-xs sm:text-sm text-text-dim font-mono-brand">{label}:</span>
-      <span className="text-lg sm:text-2xl font-bold text-primary font-mono-brand tabular-nums">
+    <div className="flex justify-between items-baseline gap-3">
+      <span className="text-[11px] sm:text-xs text-text-dim font-mono-brand whitespace-nowrap">{label}:</span>
+      <span className="text-base sm:text-xl font-bold text-primary font-mono-brand tabular-nums">
         {val.toLocaleString()}
       </span>
     </div>
-  );
-}
-
-/* ─── Animated flow line (SVG) ─── */
-function FlowLine({ from, to, color, delay = 0, status }: {
-  from: { x: number; y: number }; to: { x: number; y: number };
-  color: string; delay?: number; status: Integration["status"];
-}) {
-  const midX = from.x + (to.x - from.x) * 0.55;
-  const path = `M ${from.x} ${from.y} C ${midX} ${from.y}, ${midX} ${to.y}, ${to.x} ${to.y}`;
-
-  return (
-    <g>
-      {/* Base pipe */}
-      <path d={path} fill="none" stroke="hsl(255 12% 21%)" strokeWidth="3" strokeLinecap="round" />
-      {/* Glowing pipe */}
-      <path d={path} fill="none" stroke={color} strokeWidth="2" strokeLinecap="round"
-        opacity={status === "error" ? 0.3 : 0.6}
-        filter="url(#glow)" />
-      {/* Animated particle */}
-      {status !== "error" && (
-        <circle r="4" fill={color} filter="url(#glow)">
-          <animateMotion dur={status === "processing" ? "4s" : "2.5s"} repeatCount="indefinite" begin={`${delay}s`}>
-            <mpath href={`#flow-${from.y}`} />
-          </animateMotion>
-        </circle>
-      )}
-      <path id={`flow-${from.y}`} d={path} fill="none" stroke="none" />
-    </g>
   );
 }
 
@@ -89,42 +58,25 @@ function TerminalLog() {
   const [minimized, setMinimized] = useState(false);
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.6 }}
-      className="bg-[hsl(260_18%_6%)] border border-border rounded-lg overflow-hidden"
-    >
-      {/* Terminal header */}
-      <div className="flex items-center justify-between px-3 py-2 bg-card border-b border-border">
-        <span className="text-xs font-mono-brand font-semibold text-text-dim">Лог активности (Терминал)</span>
+    <div className="bg-[hsl(260_20%_4%/0.92)] backdrop-blur-md border border-border rounded-lg overflow-hidden shadow-2xl">
+      <div className="flex items-center justify-between px-3 py-1.5 bg-card/80 border-b border-border">
+        <span className="text-[10px] sm:text-xs font-mono-brand font-semibold text-text-dim">Лог активности (Терминал)</span>
         <div className="flex gap-1.5">
           <button onClick={() => setMinimized(!minimized)}
-            className="w-3 h-3 rounded-full bg-primary/60 hover:bg-primary transition-colors" />
-          <span className="w-3 h-3 rounded-full bg-muted-foreground/30" />
-          <span className="w-3 h-3 rounded-full bg-muted-foreground/30" />
+            className="w-2.5 h-2.5 rounded-full bg-primary/60 hover:bg-primary transition-colors" title="Свернуть" />
+          <span className="w-2.5 h-2.5 rounded-full bg-muted-foreground/20" />
+          <span className="w-2.5 h-2.5 rounded-full bg-muted-foreground/20" />
         </div>
       </div>
-
       <AnimatePresence>
         {!minimized && (
-          <motion.div
-            initial={{ height: 0 }}
-            animate={{ height: "auto" }}
-            exit={{ height: 0 }}
-            className="overflow-hidden"
-          >
-            <div className="p-3 sm:p-4 space-y-1.5 max-h-[180px] overflow-y-auto">
+          <motion.div initial={{ height: 0 }} animate={{ height: "auto" }} exit={{ height: 0 }} className="overflow-hidden">
+            <div className="p-3 space-y-1">
               {logEntries.map((log, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, x: -6 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.7 + i * 0.1 }}
-                  className="flex gap-2 text-xs sm:text-sm font-mono-brand leading-relaxed"
-                >
+                <motion.div key={i} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 + i * 0.15 }}
+                  className="flex gap-2 text-[11px] sm:text-xs font-mono-brand leading-relaxed">
                   <span className="text-muted-foreground shrink-0">{log.time}</span>
-                  <span className={`font-bold shrink-0 ${log.color}`}>[{log.tag}]</span>
+                  <span className="font-bold shrink-0" style={{ color: log.color }}>[{log.tag}]</span>
                   <span className="text-text-dim">{log.text}</span>
                 </motion.div>
               ))}
@@ -132,26 +84,15 @@ function TerminalLog() {
           </motion.div>
         )}
       </AnimatePresence>
-    </motion.div>
+    </div>
   );
 }
 
 /* ─── Main page ─── */
 export default function PageDataFlow() {
-  const svgRef = useRef<SVGSVGElement>(null);
-
-  // Positions for flow lines
-  const coreX = 480, coreY = 200;
-  const sourcePositions = [
-    { x: 60, y: 80 },
-    { x: 60, y: 170 },
-    { x: 60, y: 260 },
-    { x: 60, y: 350 },
-  ];
-
   return (
     <div className="animate-fade-in">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-5 sm:mb-7 gap-2">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2">
         <h2 className="font-display text-xl sm:text-[26px] font-bold">
           Data Flow & Integrations: <span className="text-text-dim font-normal">Центр управления данными</span>
         </h2>
@@ -164,162 +105,164 @@ export default function PageDataFlow() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-5 mb-5">
-        {/* LEFT: Flow visualization */}
+      {/* Main visualization area */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="relative bg-surface border border-border rounded-xl overflow-hidden mb-4"
+        style={{ minHeight: 480 }}
+      >
+        {/* Background grid */}
+        <div className="absolute inset-0 opacity-[0.04]"
+          style={{ backgroundImage: "radial-gradient(circle, hsl(213 47% 57%) 0.5px, transparent 0.5px)", backgroundSize: "20px 20px" }} />
+
+        {/* SVG flow */}
+        <svg viewBox="0 0 800 480" className="w-full h-full relative z-10" preserveAspectRatio="xMidYMid meet"
+          style={{ minHeight: 480 }}>
+          <defs>
+            <filter id="pipeGlow">
+              <feGaussianBlur stdDeviation="6" result="blur" />
+              <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+            </filter>
+            <filter id="coreGlow">
+              <feGaussianBlur stdDeviation="12" result="blur" />
+              <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+            </filter>
+            <linearGradient id="pipeGrad0" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stopColor="#4A9FE5" stopOpacity="0.8" />
+              <stop offset="100%" stopColor="#6BC5E8" stopOpacity="0.4" />
+            </linearGradient>
+            <linearGradient id="pipeGrad1" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stopColor="#4A9FE5" stopOpacity="0.8" />
+              <stop offset="100%" stopColor="#6BC5E8" stopOpacity="0.4" />
+            </linearGradient>
+            <linearGradient id="pipeGrad2" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stopColor="#C9A84C" stopOpacity="0.7" />
+              <stop offset="100%" stopColor="#E2C86A" stopOpacity="0.3" />
+            </linearGradient>
+            <linearGradient id="pipeGrad3" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stopColor="#D45555" stopOpacity="0.5" />
+              <stop offset="100%" stopColor="#D45555" stopOpacity="0.15" />
+            </linearGradient>
+          </defs>
+
+          {/* Flow pipes */}
+          {integrations.map((integ, i) => {
+            const sy = 80 + i * 105;
+            const path = `M 175 ${sy} C 320 ${sy}, 380 240, 470 240`;
+            return (
+              <g key={integ.name}>
+                {/* Thick background pipe */}
+                <path d={path} fill="none" stroke="hsl(255 12% 14%)" strokeWidth="14" strokeLinecap="round" />
+                {/* Inner glow pipe */}
+                <path d={path} fill="none" stroke={`url(#pipeGrad${i})`} strokeWidth="8" strokeLinecap="round"
+                  filter="url(#pipeGlow)" opacity={integ.status === "error" ? 0.35 : 0.85} />
+                {/* Bright center */}
+                <path d={path} fill="none" stroke={integ.color} strokeWidth="2" strokeLinecap="round"
+                  opacity={integ.status === "error" ? 0.2 : 0.5} />
+
+                {/* Animated particles */}
+                {integ.status !== "error" && (
+                  <>
+                    <circle r="5" fill={integ.color} opacity="0.9" filter="url(#pipeGlow)">
+                      <animateMotion dur={integ.status === "processing" ? "5s" : "3s"} repeatCount="indefinite" begin={`${i * 0.6}s`}>
+                        <mpath href={`#pipe${i}`} />
+                      </animateMotion>
+                    </circle>
+                    <circle r="3" fill="white" opacity="0.6">
+                      <animateMotion dur={integ.status === "processing" ? "5s" : "3s"} repeatCount="indefinite" begin={`${i * 0.6 + 1.2}s`}>
+                        <mpath href={`#pipe${i}`} />
+                      </animateMotion>
+                    </circle>
+                  </>
+                )}
+                <path id={`pipe${i}`} d={path} fill="none" stroke="none" />
+              </g>
+            );
+          })}
+
+          {/* Integration source cards */}
+          {integrations.map((integ, i) => {
+            const y = 80 + i * 105;
+            return (
+              <g key={`card-${integ.name}`}>
+                <rect x="30" y={y - 50} width="130" height="85" rx="12"
+                  fill="hsl(255 20% 8%)" stroke="hsl(255 12% 21%)" strokeWidth="1.5" />
+                {/* Icon circle */}
+                <rect x="65" y={y - 42} width="60" height="40" rx="8"
+                  fill="hsl(213 47% 57% / 0.1)" stroke="hsl(213 47% 57% / 0.2)" strokeWidth="1" />
+                <text x="95" y={y - 14} textAnchor="middle" fontSize="22">{integ.icon}</text>
+                {/* Name */}
+                <text x="95" y={y + 18} textAnchor="middle"
+                  fill="hsl(253 30% 92%)" fontSize="12" fontWeight="700">
+                  {integ.name}
+                </text>
+                {/* Status dot & text */}
+                <circle cx="46" cy={y + 30} r="4" fill={statusDot[integ.status]} />
+                <text x="56" y={y + 34} fill={statusDot[integ.status]} fontSize="8.5" fontFamily="monospace">
+                  {integ.statusText}
+                </text>
+              </g>
+            );
+          })}
+
+          {/* Core AMOS engine */}
+          <g>
+            {/* Outer pulsing ring */}
+            <circle cx="530" cy="240" r="80" fill="none" stroke="#4A9FE5" strokeWidth="1"
+              strokeDasharray="6 4" opacity="0.3" filter="url(#coreGlow)">
+              <animateTransform attributeName="transform" type="rotate"
+                from="0 530 240" to="360 530 240" dur="25s" repeatCount="indefinite" />
+            </circle>
+            <circle cx="530" cy="240" r="68" fill="none" stroke="#4A9FE5" strokeWidth="1.5"
+              strokeDasharray="3 6" opacity="0.2">
+              <animateTransform attributeName="transform" type="rotate"
+                from="360 530 240" to="0 530 240" dur="18s" repeatCount="indefinite" />
+            </circle>
+            {/* Main circle */}
+            <circle cx="530" cy="240" r="55" fill="hsl(255 20% 8%)" stroke="#4A9FE5"
+              strokeWidth="2" filter="url(#pipeGlow)" />
+            {/* Inner pulse */}
+            <circle cx="530" cy="240" r="45" fill="#4A9FE5" opacity="0.05">
+              <animate attributeName="r" values="42;50;42" dur="3s" repeatCount="indefinite" />
+              <animate attributeName="opacity" values="0.05;0.12;0.05" dur="3s" repeatCount="indefinite" />
+            </circle>
+            {/* Brain */}
+            <text x="530" y="248" textAnchor="middle" fontSize="38">🧠</text>
+            {/* Labels */}
+            <text x="530" y="310" textAnchor="middle" fill="hsl(253 30% 92%)" fontSize="14" fontWeight="700">
+              Ядро АМОС
+            </text>
+            <text x="530" y="328" textAnchor="middle" fill="hsl(252 10% 52%)" fontSize="11">
+              (AI Engine)
+            </text>
+          </g>
+        </svg>
+
+        {/* Stats overlay - top right */}
         <motion.div
-          initial={{ opacity: 0, y: 12 }}
+          initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-surface border border-border rounded-xl p-4 sm:p-6 relative overflow-hidden min-h-[420px]"
+          transition={{ delay: 0.3 }}
+          className="absolute top-4 right-4 bg-card/80 backdrop-blur-md border border-border rounded-xl p-3 sm:p-4 w-[260px] sm:w-[300px] z-20"
         >
-          {/* Background grid pattern */}
-          <div className="absolute inset-0 opacity-[0.03]"
-            style={{ backgroundImage: "radial-gradient(circle, hsl(43 56% 54%) 1px, transparent 1px)", backgroundSize: "24px 24px" }}
-          />
-
-          {/* SVG flow visualization */}
-          <svg ref={svgRef} viewBox="0 0 600 420" className="w-full h-full relative z-10" preserveAspectRatio="xMidYMid meet">
-            <defs>
-              <filter id="glow">
-                <feGaussianBlur stdDeviation="3" result="coloredBlur" />
-                <feMerge>
-                  <feMergeNode in="coloredBlur" />
-                  <feMergeNode in="SourceGraphic" />
-                </feMerge>
-              </filter>
-              <filter id="glowBig">
-                <feGaussianBlur stdDeviation="8" result="coloredBlur" />
-                <feMerge>
-                  <feMergeNode in="coloredBlur" />
-                  <feMergeNode in="SourceGraphic" />
-                </feMerge>
-              </filter>
-            </defs>
-
-            {/* Flow lines */}
-            {integrations.map((integ, i) => (
-              <FlowLine
-                key={integ.name}
-                from={sourcePositions[i]}
-                to={{ x: coreX - 50, y: coreY }}
-                color={integ.color}
-                delay={i * 0.5}
-                status={integ.status}
-              />
-            ))}
-
-            {/* Integration source cards */}
-            {integrations.map((integ, i) => {
-              const pos = sourcePositions[i];
-              return (
-                <g key={integ.name}>
-                  {/* Card bg */}
-                  <rect x={pos.x - 45} y={pos.y - 35} width="90" height="70" rx="10"
-                    fill="hsl(255 20% 8%)" stroke="hsl(255 12% 21%)" strokeWidth="1" />
-                  {/* Icon */}
-                  <text x={pos.x} y={pos.y - 6} textAnchor="middle" fontSize="24">{integ.icon}</text>
-                  {/* Name */}
-                  <text x={pos.x} y={pos.y + 16} textAnchor="middle"
-                    fill="hsl(253 30% 92%)" fontSize="11" fontWeight="600" fontFamily="inherit">
-                    {integ.name}
-                  </text>
-                  {/* Status dot */}
-                  <circle cx={pos.x - 30} cy={pos.y + 28} r="4"
-                    fill={integ.status === "ok" ? "hsl(150 36% 46%)" : integ.status === "processing" ? "hsl(43 56% 54%)" : "hsl(0 47% 56%)"} />
-                </g>
-              );
-            })}
-
-            {/* Core AMOS engine */}
-            <g>
-              {/* Outer ring */}
-              <circle cx={coreX} cy={coreY} r="65" fill="none" stroke="hsl(213 47% 57%)" strokeWidth="1.5"
-                strokeDasharray="4 4" opacity="0.4" filter="url(#glow)">
-                <animateTransform attributeName="transform" type="rotate"
-                  from={`0 ${coreX} ${coreY}`} to={`360 ${coreX} ${coreY}`} dur="20s" repeatCount="indefinite" />
-              </circle>
-              {/* Inner ring */}
-              <circle cx={coreX} cy={coreY} r="48" fill="hsl(255 20% 8%)" stroke="hsl(213 47% 57%)"
-                strokeWidth="2" filter="url(#glow)" opacity="0.8" />
-              {/* Pulsing glow */}
-              <circle cx={coreX} cy={coreY} r="42" fill="hsl(213 47% 57%)" opacity="0.06">
-                <animate attributeName="r" values="40;48;40" dur="3s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="0.06;0.12;0.06" dur="3s" repeatCount="indefinite" />
-              </circle>
-              {/* Brain icon */}
-              <text x={coreX} y={coreY + 5} textAnchor="middle" fontSize="32">🧠</text>
-              {/* Label */}
-              <text x={coreX} y={coreY + 55} textAnchor="middle"
-                fill="hsl(253 30% 92%)" fontSize="12" fontWeight="700" fontFamily="inherit">
-                Ядро АМОС
-              </text>
-              <text x={coreX} y={coreY + 70} textAnchor="middle"
-                fill="hsl(252 10% 52%)" fontSize="10" fontFamily="inherit">
-                (AI Engine)
-              </text>
-            </g>
-          </svg>
-
-          {/* Status labels below sources (HTML overlay) */}
-          <div className="absolute bottom-3 left-3 flex flex-wrap gap-2">
-            {integrations.map(integ => (
-              <span key={integ.name} className={`text-[10px] font-mono-brand flex items-center gap-1 ${statusColor[integ.status]}`}>
-                {statusIcon[integ.status]} {integ.name}
-              </span>
-            ))}
-          </div>
+          <Counter target={14502} label="Сообщений проанализировано сегодня" />
+          <div className="border-t border-border my-2" />
+          <Counter target={32} label="Выявлено новых паттернов" />
+          <div className="border-t border-border my-2" />
+          <Counter target={148} label="Активных сессий" />
         </motion.div>
 
-        {/* RIGHT: Stats panel */}
+        {/* Terminal overlay - bottom right */}
         <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.2 }}
-          className="flex flex-col gap-4"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          className="absolute bottom-4 right-4 w-[340px] sm:w-[480px] z-20"
         >
-          {/* Counters */}
-          <div className="bg-surface border border-border rounded-xl p-4 sm:p-5">
-            <div className="flex flex-col gap-3">
-              <Counter target={14502} label="Сообщений проанализировано сегодня" />
-              <div className="border-t border-border" />
-              <Counter target={32} label="Выявлено новых паттернов" />
-              <div className="border-t border-border" />
-              <Counter target={148} label="Активных сессий" />
-            </div>
-          </div>
-
-          {/* Integration health */}
-          <div className="bg-surface border border-border rounded-xl p-4 sm:p-5">
-            <h4 className="font-display text-[13px] font-semibold mb-3 flex items-center gap-2">
-              <span className="w-1.5 h-4 rounded-full bg-blue inline-block" />
-              Статус интеграций
-            </h4>
-            <div className="flex flex-col gap-2">
-              {integrations.map(integ => (
-                <div key={integ.name} className={`flex items-center justify-between p-2.5 rounded-lg border transition-colors ${
-                  integ.status === "error" ? "border-destructive/30 bg-destructive/5" :
-                  integ.status === "processing" ? "border-primary/20 bg-primary/5" :
-                  "border-border bg-card/50"
-                }`}>
-                  <div className="flex items-center gap-2">
-                    <span className="text-base">{integ.icon}</span>
-                    <span className="text-xs font-semibold">{integ.name}</span>
-                  </div>
-                  <span className={`text-[10px] font-mono-brand font-semibold px-2 py-0.5 rounded-full border ${
-                    integ.status === "ok" ? "bg-green/10 text-green border-green/30" :
-                    integ.status === "processing" ? "bg-primary/10 text-primary border-primary/30" :
-                    "bg-destructive/10 text-destructive border-destructive/30"
-                  }`}>
-                    {integ.status === "ok" ? "Online" : integ.status === "processing" ? "Syncing" : "Error"}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
+          <TerminalLog />
         </motion.div>
-      </div>
-
-      {/* Terminal log */}
-      <TerminalLog />
+      </motion.div>
     </div>
   );
 }
