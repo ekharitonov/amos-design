@@ -211,158 +211,163 @@ export default function PageDataFlow() {
             );
           })}
 
-          {/* ═══ CORE AMOS ENGINE ═══ */}
+          {/* ═══ CORE AMOS ENGINE — ROUNDED SQUARE FRAME ═══ */}
           <g className="cursor-pointer">
-            {/* ── VISIBLE ORBIT 1 (outermost) ── */}
-            <circle cx={coreX} cy={coreY} r="115" fill="none" stroke="#3B82F6" strokeWidth="0.7" opacity="0.35" />
-            {/* Rotating dashes on orbit 1 */}
-            <circle cx={coreX} cy={coreY} r="115" fill="none" stroke="#60A5FA" strokeWidth="1"
-              strokeDasharray="3 20" opacity="0.2">
-              <animateTransform attributeName="transform" type="rotate"
-                from={`0 ${coreX} ${coreY}`} to={`360 ${coreX} ${coreY}`} dur="30s" repeatCount="indefinite" />
-            </circle>
-            {/* Orbiting objects on orbit 1 */}
-            <circle r="5" fill="#60A5FA" opacity="0.9" filter="url(#softGlow)">
-              <animateMotion dur="8s" repeatCount="indefinite"
-                path={`M ${coreX},${coreY - 115} A 115,115 0 1,1 ${coreX - 0.01},${coreY - 115}`} />
-            </circle>
-            <circle r="3" fill="#93C5FD" opacity="0.7">
-              <animateMotion dur="8s" repeatCount="indefinite" begin="4s"
-                path={`M ${coreX},${coreY - 115} A 115,115 0 1,1 ${coreX - 0.01},${coreY - 115}`} />
-            </circle>
-            <rect width="6" height="6" rx="1" fill="#C9A84C" opacity="0.8" filter="url(#softGlow)">
-              <animateMotion dur="12s" repeatCount="indefinite"
-                path={`M ${coreX + 115},${coreY} A 115,115 0 1,1 ${coreX + 114.99},${coreY}`} />
-              <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="4s" repeatCount="indefinite" />
+            {/* Outer rounded rect frame - subtle */}
+            <rect x={coreX - 82} y={coreY - 82} width="164" height="164" rx="28"
+              fill="none" stroke="#3B82F6" strokeWidth="1.5" opacity="0.2" />
+            {/* Main rounded rect frame */}
+            <rect x={coreX - 72} y={coreY - 72} width="144" height="144" rx="24"
+              fill="hsl(220 25% 8%)" stroke="#3B82F6" strokeWidth="2" opacity="0.9" filter="url(#softGlow)" />
+            {/* Inner glow fill */}
+            <rect x={coreX - 72} y={coreY - 72} width="144" height="144" rx="24"
+              fill="#3B82F6" opacity="0.05">
+              <animate attributeName="opacity" values="0.03;0.1;0.03" dur="3s" repeatCount="indefinite" />
             </rect>
-
-            {/* ── VISIBLE ORBIT 2 (middle) ── */}
-            <circle cx={coreX} cy={coreY} r="95" fill="none" stroke="#3B82F6" strokeWidth="0.5" opacity="0.3" />
-            <circle cx={coreX} cy={coreY} r="95" fill="none" stroke="#3B82F6" strokeWidth="0.8"
-              strokeDasharray="5 12" opacity="0.15">
-              <animateTransform attributeName="transform" type="rotate"
-                from={`360 ${coreX} ${coreY}`} to={`0 ${coreX} ${coreY}`} dur="22s" repeatCount="indefinite" />
-            </circle>
-            {/* Orbiting objects on orbit 2 */}
-            <circle r="4" fill="#3B82F6" opacity="0.85" filter="url(#softGlow)">
-              <animateMotion dur="6s" repeatCount="indefinite"
-                path={`M ${coreX - 95},${coreY} A 95,95 0 1,0 ${coreX - 94.99},${coreY}`} />
-            </circle>
-            <polygon points="0,-4 3.5,2 -3.5,2" fill="#E2C86A" opacity="0.8" filter="url(#softGlow)">
-              <animateMotion dur="9s" repeatCount="indefinite" begin="2s"
-                path={`M ${coreX},${coreY + 95} A 95,95 0 1,1 ${coreX + 0.01},${coreY + 95}`} />
-              <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="3s" repeatCount="indefinite" />
-            </polygon>
-            <circle r="2.5" fill="#93C5FD" opacity="0.6">
-              <animateMotion dur="6s" repeatCount="indefinite" begin="3s"
-                path={`M ${coreX - 95},${coreY} A 95,95 0 1,0 ${coreX - 94.99},${coreY}`} />
-            </circle>
-
-            {/* ── VISIBLE ORBIT 3 (inner) ── */}
-            <circle cx={coreX} cy={coreY} r="88" fill="none" stroke="#60A5FA" strokeWidth="0.4" opacity="0.25" />
-            <circle cx={coreX} cy={coreY} r="88" fill="none" stroke="#60A5FA" strokeWidth="0.6"
-              strokeDasharray="2 16" opacity="0.2">
-              <animateTransform attributeName="transform" type="rotate"
-                from={`0 ${coreX} ${coreY}`} to={`360 ${coreX} ${coreY}`} dur="14s" repeatCount="indefinite" />
-            </circle>
-            {/* Orbiting objects on orbit 3 */}
-            <circle r="3.5" fill="#C9A84C" opacity="0.8" filter="url(#softGlow)">
-              <animateMotion dur="5s" repeatCount="indefinite"
-                path={`M ${coreX},${coreY - 88} A 88,88 0 1,1 ${coreX - 0.01},${coreY - 88}`} />
-            </circle>
-            <circle r="2" fill="#60A5FA" opacity="0.5">
-              <animateMotion dur="5s" repeatCount="indefinite" begin="2.5s"
-                path={`M ${coreX},${coreY - 88} A 88,88 0 1,1 ${coreX - 0.01},${coreY - 88}`} />
-            </circle>
-
-            {/* Pulsing outer glow */}
-            <circle cx={coreX} cy={coreY} r="85" fill="#3B82F6" opacity="0.03">
-              <animate attributeName="r" values="80;100;80" dur="4s" repeatCount="indefinite" />
-              <animate attributeName="opacity" values="0.03;0.08;0.03" dur="4s" repeatCount="indefinite" />
-            </circle>
+            {/* Brain image */}
+            <image href={brainImg} x={coreX - 54} y={coreY - 54} width="108" height="108" filter="url(#softGlow)">
+              <animate attributeName="opacity" values="0.85;1;0.85" dur="3s" repeatCount="indefinite" />
+            </image>
+            {/* Corner accents */}
+            {[
+              { x: coreX - 78, y: coreY - 78 }, { x: coreX + 68, y: coreY - 78 },
+              { x: coreX - 78, y: coreY + 68 }, { x: coreX + 68, y: coreY + 68 },
+            ].map((c, i) => (
+              <circle key={`corner-${i}`} cx={c.x + 5} cy={c.y + 5} r="2" fill="#60A5FA" opacity="0.5">
+                <animate attributeName="opacity" values="0.3;0.8;0.3" dur={`${2 + i * 0.4}s`} repeatCount="indefinite" />
+              </circle>
+            ))}
             {/* Labels */}
-            <text x={coreX} y={coreY + 92} textAnchor="middle"
+            <text x={coreX} y={coreY + 100} textAnchor="middle"
               fill="#E8E8F0" fontSize="16" fontWeight="700" fontFamily="'Playfair Display', serif">
               Ядро АМОС
             </text>
-            <text x={coreX} y={coreY + 110} textAnchor="middle"
+            <text x={coreX} y={coreY + 118} textAnchor="middle"
               fill="#6B6B80" fontSize="12" fontFamily="'Playfair Display', serif">
               (AI Engine)
             </text>
           </g>
 
-          {/* ═══ NEURAL BEAM FROM CORE ═══ */}
+          {/* ═══ POWERFUL LASER BEAM ═══ */}
           <g>
-            {/* Wide soft beam glow */}
-            <path d={`M ${coreX + 78} ${coreY} Q ${coreX + 200} ${coreY}, 900 ${coreY}`}
-              fill="none" stroke="url(#beamGrad)" strokeWidth="28" opacity="0.15" filter="url(#beamGlow)">
-              <animate attributeName="opacity" values="0.1;0.2;0.1" dur="2.5s" repeatCount="indefinite" />
-            </path>
-            {/* Medium beam */}
-            <path d={`M ${coreX + 78} ${coreY} Q ${coreX + 200} ${coreY}, 900 ${coreY}`}
-              fill="none" stroke="url(#beamGrad)" strokeWidth="8" opacity="0.5" filter="url(#softGlow)">
-              <animate attributeName="opacity" values="0.4;0.7;0.4" dur="2s" repeatCount="indefinite" />
-            </path>
-            {/* Bright core beam */}
-            <path d={`M ${coreX + 78} ${coreY} Q ${coreX + 200} ${coreY}, 900 ${coreY}`}
-              fill="none" stroke="url(#beamGradBright)" strokeWidth="2" opacity="0.8">
-              <animate attributeName="opacity" values="0.6;1;0.6" dur="1.8s" repeatCount="indefinite" />
-            </path>
+            {/* Layer 1: Ultra-wide ambient glow */}
+            <line x1={coreX + 72} y1={coreY} x2="900" y2={coreY}
+              stroke="#C9A84C" strokeWidth="60" opacity="0.04" filter="url(#beamGlow)">
+              <animate attributeName="opacity" values="0.03;0.07;0.03" dur="1.5s" repeatCount="indefinite" />
+            </line>
+            {/* Layer 2: Wide golden haze */}
+            <line x1={coreX + 72} y1={coreY} x2="900" y2={coreY}
+              stroke="url(#beamGrad)" strokeWidth="30" opacity="0.12" filter="url(#beamGlow)">
+              <animate attributeName="opacity" values="0.08;0.18;0.08" dur="1.2s" repeatCount="indefinite" />
+            </line>
+            {/* Layer 3: Focused beam body */}
+            <line x1={coreX + 72} y1={coreY} x2="900" y2={coreY}
+              stroke="url(#beamGrad)" strokeWidth="10" opacity="0.6" filter="url(#softGlow)">
+              <animate attributeName="opacity" values="0.5;0.8;0.5" dur="0.8s" repeatCount="indefinite" />
+            </line>
+            {/* Layer 4: Hot inner beam */}
+            <line x1={coreX + 72} y1={coreY} x2="900" y2={coreY}
+              stroke="url(#beamGradBright)" strokeWidth="4" opacity="0.9" filter="url(#softGlow)">
+              <animate attributeName="opacity" values="0.7;1;0.7" dur="0.6s" repeatCount="indefinite" />
+            </line>
+            {/* Layer 5: White-hot core line */}
+            <line x1={coreX + 72} y1={coreY} x2="900" y2={coreY}
+              stroke="#FFFDE8" strokeWidth="1.5" opacity="0.8">
+              <animate attributeName="opacity" values="0.5;1;0.5" dur="0.4s" repeatCount="indefinite" />
+            </line>
 
-            {/* Neural network branches */}
-            {/* Upper branches */}
-            <path d={`M ${coreX + 180} ${coreY - 5} L 780 ${coreY - 60} L 850 ${coreY - 60}`}
-              fill="none" stroke="#3B82F6" strokeWidth="1.2" opacity="0.3" strokeLinecap="round" />
-            <path d={`M ${coreX + 220} ${coreY - 8} L 760 ${coreY - 110} L 830 ${coreY - 130}`}
-              fill="none" stroke="#3B82F6" strokeWidth="0.8" opacity="0.2" strokeLinecap="round" />
-            <path d={`M ${coreX + 260} ${coreY - 3} L 800 ${coreY - 35} L 880 ${coreY - 40}`}
-              fill="none" stroke="#60A5FA" strokeWidth="0.8" opacity="0.25" strokeLinecap="round" />
-            {/* Lower branches */}
-            <path d={`M ${coreX + 180} ${coreY + 5} L 780 ${coreY + 55} L 860 ${coreY + 55}`}
-              fill="none" stroke="#3B82F6" strokeWidth="1.2" opacity="0.3" strokeLinecap="round" />
-            <path d={`M ${coreX + 220} ${coreY + 8} L 750 ${coreY + 100} L 840 ${coreY + 120}`}
-              fill="none" stroke="#3B82F6" strokeWidth="0.8" opacity="0.2" strokeLinecap="round" />
-            <path d={`M ${coreX + 260} ${coreY + 3} L 810 ${coreY + 30} L 890 ${coreY + 25}`}
-              fill="none" stroke="#60A5FA" strokeWidth="0.8" opacity="0.25" strokeLinecap="round" />
-
-            {/* Branch endpoint dots */}
-            {[
-              { x: 850, y: coreY - 60 }, { x: 830, y: coreY - 130 }, { x: 880, y: coreY - 40 },
-              { x: 860, y: coreY + 55 }, { x: 840, y: coreY + 120 }, { x: 890, y: coreY + 25 },
-            ].map((dot, i) => (
-              <circle key={`nd-${i}`} cx={dot.x} cy={dot.y} r="3" fill="#60A5FA" opacity="0.5">
-                <animate attributeName="opacity" values="0.3;0.8;0.3" dur={`${2 + i * 0.3}s`} repeatCount="indefinite" />
-                <animate attributeName="r" values="2;4;2" dur={`${2 + i * 0.3}s`} repeatCount="indefinite" />
+            {/* Beam flicker particles — fast, bright */}
+            {[0, 0.3, 0.6, 0.9, 1.2, 1.5].map((delay, i) => (
+              <circle key={`bp-${i}`} r={i % 2 === 0 ? 4 : 2.5} fill={i % 3 === 0 ? "#FFF8E1" : "#E2C86A"}
+                opacity="0.9" filter="url(#softGlow)">
+                <animateMotion dur="1.4s" repeatCount="indefinite" begin={`${delay}s`}
+                  path={`M ${coreX + 72},${coreY} L 900,${coreY}`} />
+                <animate attributeName="opacity" values="1;0.2;1" dur="1.4s" repeatCount="indefinite" begin={`${delay}s`} />
               </circle>
             ))}
 
-            {/* Pulse particles along the beam */}
-            <circle r="5" fill="#C9A84C" opacity="0.9" filter="url(#softGlow)">
-              <animateMotion dur="2s" repeatCount="indefinite" path={`M ${coreX + 78},${coreY} L 900,${coreY}`} />
-              <animate attributeName="r" values="5;2;5" dur="2s" repeatCount="indefinite" />
-              <animate attributeName="opacity" values="0.9;0.3;0.9" dur="2s" repeatCount="indefinite" />
-            </circle>
-            <circle r="3" fill="#FFF8E1" opacity="0.7">
-              <animateMotion dur="2s" repeatCount="indefinite" begin="0.7s" path={`M ${coreX + 78},${coreY} L 900,${coreY}`} />
-              <animate attributeName="opacity" values="0.7;0.2;0.7" dur="2s" repeatCount="indefinite" begin="0.7s" />
-            </circle>
-            <circle r="4" fill="#E2C86A" opacity="0.6" filter="url(#softGlow)">
-              <animateMotion dur="2.5s" repeatCount="indefinite" begin="1.3s" path={`M ${coreX + 78},${coreY} L 900,${coreY}`} />
-            </circle>
+            {/* ── CIRCUIT BOARD BRANCHES ── */}
+            {/* Upper circuit lines */}
+            <path d={`M ${coreX + 150} ${coreY} L ${coreX + 180} ${coreY - 30} L 750 ${coreY - 30} L 770 ${coreY - 50} L 850 ${coreY - 50}`}
+              fill="none" stroke="#3B82F6" strokeWidth="1.2" opacity="0.35" strokeLinecap="round" />
+            <path d={`M ${coreX + 200} ${coreY} L ${coreX + 220} ${coreY - 55} L 720 ${coreY - 55} L 740 ${coreY - 80} L 780 ${coreY - 80} L 800 ${coreY - 105} L 870 ${coreY - 105}`}
+              fill="none" stroke="#3B82F6" strokeWidth="0.8" opacity="0.25" strokeLinecap="round" />
+            <path d={`M ${coreX + 170} ${coreY} L ${coreX + 190} ${coreY - 15} L 790 ${coreY - 15} L 810 ${coreY - 30} L 890 ${coreY - 30}`}
+              fill="none" stroke="#60A5FA" strokeWidth="0.7" opacity="0.2" strokeLinecap="round" />
+            <path d={`M ${coreX + 250} ${coreY - 2} L ${coreX + 270} ${coreY - 70} L 700 ${coreY - 70} L 720 ${coreY - 130} L 830 ${coreY - 130}`}
+              fill="none" stroke="#3B82F6" strokeWidth="0.6" opacity="0.18" strokeLinecap="round" />
+            {/* Lower circuit lines */}
+            <path d={`M ${coreX + 150} ${coreY} L ${coreX + 180} ${coreY + 30} L 750 ${coreY + 30} L 770 ${coreY + 50} L 860 ${coreY + 50}`}
+              fill="none" stroke="#3B82F6" strokeWidth="1.2" opacity="0.35" strokeLinecap="round" />
+            <path d={`M ${coreX + 200} ${coreY} L ${coreX + 220} ${coreY + 55} L 710 ${coreY + 55} L 730 ${coreY + 85} L 770 ${coreY + 85} L 790 ${coreY + 110} L 860 ${coreY + 110}`}
+              fill="none" stroke="#3B82F6" strokeWidth="0.8" opacity="0.25" strokeLinecap="round" />
+            <path d={`M ${coreX + 170} ${coreY} L ${coreX + 190} ${coreY + 15} L 800 ${coreY + 15} L 820 ${coreY + 28} L 890 ${coreY + 28}`}
+              fill="none" stroke="#60A5FA" strokeWidth="0.7" opacity="0.2" strokeLinecap="round" />
+            <path d={`M ${coreX + 250} ${coreY + 2} L ${coreX + 270} ${coreY + 72} L 690 ${coreY + 72} L 710 ${coreY + 135} L 840 ${coreY + 135}`}
+              fill="none" stroke="#3B82F6" strokeWidth="0.6" opacity="0.18" strokeLinecap="round" />
 
-            {/* Floating binary/data particles near branches */}
+            {/* Circuit branch junction dots */}
             {[
-              { x: 750, y: coreY - 50, text: "101001" },
-              { x: 800, y: coreY + 40, text: "010110" },
-              { x: 720, y: coreY - 90, text: "110010" },
-              { x: 770, y: coreY + 85, text: "001101" },
+              { x: coreX + 180, y: coreY - 30 }, { x: 770, y: coreY - 50 },
+              { x: coreX + 220, y: coreY - 55 }, { x: 800, y: coreY - 105 },
+              { x: coreX + 180, y: coreY + 30 }, { x: 770, y: coreY + 50 },
+              { x: coreX + 220, y: coreY + 55 }, { x: 790, y: coreY + 110 },
+              { x: 740, y: coreY - 80 }, { x: 730, y: coreY + 85 },
+            ].map((dot, i) => (
+              <circle key={`jd-${i}`} cx={dot.x} cy={dot.y} r="2.5" fill="#60A5FA" opacity="0.4">
+                <animate attributeName="opacity" values="0.2;0.7;0.2" dur={`${1.5 + i * 0.2}s`} repeatCount="indefinite" />
+              </circle>
+            ))}
+
+            {/* Endpoint terminal dots */}
+            {[
+              { x: 850, y: coreY - 50 }, { x: 870, y: coreY - 105 }, { x: 890, y: coreY - 30 }, { x: 830, y: coreY - 130 },
+              { x: 860, y: coreY + 50 }, { x: 860, y: coreY + 110 }, { x: 890, y: coreY + 28 }, { x: 840, y: coreY + 135 },
+            ].map((dot, i) => (
+              <g key={`td-${i}`}>
+                <circle cx={dot.x} cy={dot.y} r="3.5" fill="#3B82F6" opacity="0.15" filter="url(#softGlow)">
+                  <animate attributeName="r" values="3;6;3" dur={`${2.5 + i * 0.3}s`} repeatCount="indefinite" />
+                  <animate attributeName="opacity" values="0.1;0.35;0.1" dur={`${2.5 + i * 0.3}s`} repeatCount="indefinite" />
+                </circle>
+                <circle cx={dot.x} cy={dot.y} r="2" fill="#60A5FA" opacity="0.7">
+                  <animate attributeName="opacity" values="0.4;1;0.4" dur={`${2 + i * 0.25}s`} repeatCount="indefinite" />
+                </circle>
+              </g>
+            ))}
+
+            {/* Binary data streams */}
+            {[
+              { x: 740, y: coreY - 42, text: "10011010101" },
+              { x: 690, y: coreY - 68, text: "01101100010" },
+              { x: 780, y: coreY - 95, text: "10011101011" },
+              { x: 720, y: coreY - 122, text: "00110100" },
+              { x: 740, y: coreY + 42, text: "01011010110" },
+              { x: 700, y: coreY + 68, text: "11001010100" },
+              { x: 760, y: coreY + 98, text: "01101011" },
+              { x: 710, y: coreY + 128, text: "100110" },
+              { x: 800, y: coreY - 18, text: "1001110101011" },
+              { x: 810, y: coreY + 12, text: "0110101001101" },
             ].map((d, i) => (
-              <text key={`bin-${i}`} x={d.x} y={d.y} fontSize="8" fill="#3B82F6" opacity="0.15"
-                fontFamily="'JetBrains Mono', monospace">
-                <animate attributeName="opacity" values="0.08;0.25;0.08" dur={`${3 + i * 0.5}s`} repeatCount="indefinite" />
+              <text key={`bin-${i}`} x={d.x} y={d.y} fontSize="7" fill="#3B82F6" opacity="0.12"
+                fontFamily="'JetBrains Mono', monospace" letterSpacing="1.5">
+                <animate attributeName="opacity" values="0.06;0.22;0.06" dur={`${2.5 + i * 0.4}s`} repeatCount="indefinite" />
                 {d.text}
               </text>
             ))}
+
+            {/* Scattered floating particles in the beam field */}
+            {Array.from({ length: 12 }).map((_, i) => {
+              const px = coreX + 100 + Math.random() * 250;
+              const py = coreY - 80 + Math.random() * 160;
+              return (
+                <circle key={`sp-${i}`} cx={px} cy={py} r={1 + Math.random() * 1.5}
+                  fill="#60A5FA" opacity={0.15 + Math.random() * 0.2}>
+                  <animate attributeName="opacity"
+                    values={`${0.1 + Math.random() * 0.1};${0.3 + Math.random() * 0.2};${0.1 + Math.random() * 0.1}`}
+                    dur={`${2 + Math.random() * 3}s`} repeatCount="indefinite" />
+                </circle>
+              );
+            })}
           </g>
 
         </svg>
