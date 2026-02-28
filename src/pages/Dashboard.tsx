@@ -7,12 +7,14 @@ import PageOsnova from "@/components/dashboard/pages/PageOsnova";
 import PageBridges from "@/components/dashboard/pages/PageBridges";
 import PageSettings from "@/components/dashboard/pages/PageSettings";
 import PageRitualPrep from "@/components/dashboard/pages/PageRitualPrep";
+import PageAdmin from "@/components/dashboard/pages/PageAdmin";
 
 const nav = [
   { id: "main", label: "Главная" },
   { id: "team", label: "Команда" },
   { id: "iznanka", label: "Изнанка" },
   { id: "ritual", label: "Ritual Prep" },
+  { id: "admin", label: "Admin" },
   { id: "settings", label: "Настройки" },
 ];
 
@@ -35,6 +37,7 @@ export default function Dashboard() {
         if (layer === "osnova") return <PageOsnova />;
         return <PageBridges />;
       case "ritual": return <PageRitualPrep />;
+      case "admin": return <PageAdmin />;
       case "settings": return <PageSettings />;
       default: return <PageMain />;
     }
