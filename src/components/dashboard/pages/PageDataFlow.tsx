@@ -116,21 +116,42 @@ export default function PageDataFlow() {
               <stop offset="0%" stopColor="#EF4444" stopOpacity="0.4" />
               <stop offset="100%" stopColor="#EF4444" stopOpacity="0.15" />
             </linearGradient>
-            {/* Beam gradient */}
+            {/* Beam gradients */}
             <linearGradient id="beamGrad" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stopColor="#C9A84C" stopOpacity="1" />
-              <stop offset="30%" stopColor="#E2C86A" stopOpacity="0.7" />
-              <stop offset="70%" stopColor="#60A5FA" stopOpacity="0.3" />
+              <stop offset="0%" stopColor="#FFF8E1" stopOpacity="1" />
+              <stop offset="8%" stopColor="#C9A84C" stopOpacity="0.9" />
+              <stop offset="25%" stopColor="#E2C86A" stopOpacity="0.6" />
+              <stop offset="50%" stopColor="#C9A84C" stopOpacity="0.3" />
+              <stop offset="80%" stopColor="#60A5FA" stopOpacity="0.1" />
               <stop offset="100%" stopColor="#3B82F6" stopOpacity="0" />
             </linearGradient>
             <linearGradient id="beamGradBright" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stopColor="#FFF8E1" stopOpacity="0.9" />
-              <stop offset="20%" stopColor="#E2C86A" stopOpacity="0.6" />
-              <stop offset="60%" stopColor="#93C5FD" stopOpacity="0.15" />
+              <stop offset="0%" stopColor="#FFFFFF" stopOpacity="1" />
+              <stop offset="5%" stopColor="#FFF8E1" stopOpacity="0.95" />
+              <stop offset="15%" stopColor="#E2C86A" stopOpacity="0.7" />
+              <stop offset="40%" stopColor="#C9A84C" stopOpacity="0.35" />
+              <stop offset="70%" stopColor="#60A5FA" stopOpacity="0.08" />
               <stop offset="100%" stopColor="#3B82F6" stopOpacity="0" />
             </linearGradient>
+            <linearGradient id="beamGradWarm" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stopColor="#FFF0C0" stopOpacity="0.8" />
+              <stop offset="10%" stopColor="#DAB44E" stopOpacity="0.5" />
+              <stop offset="35%" stopColor="#C9A84C" stopOpacity="0.2" />
+              <stop offset="100%" stopColor="#C9A84C" stopOpacity="0" />
+            </linearGradient>
+            <radialGradient id="beamOriginGlow" cx="0" cy="0.5" r="0.4" fx="0" fy="0.5">
+              <stop offset="0%" stopColor="#FFF8E1" stopOpacity="0.6" />
+              <stop offset="50%" stopColor="#C9A84C" stopOpacity="0.2" />
+              <stop offset="100%" stopColor="#C9A84C" stopOpacity="0" />
+            </radialGradient>
             <filter id="beamGlow">
-              <feGaussianBlur stdDeviation="6" result="b" />
+              <feGaussianBlur stdDeviation="8" result="b1" />
+              <feGaussianBlur stdDeviation="20" result="b2" />
+              <feMerge><feMergeNode in="b2" /><feMergeNode in="b1" /><feMergeNode in="SourceGraphic" /></feMerge>
+            </filter>
+            <filter id="plasmaGlow">
+              <feGaussianBlur stdDeviation="3" result="b" />
+              <feComposite in="b" in2="SourceGraphic" operator="over" />
               <feMerge><feMergeNode in="b" /><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
             </filter>
           </defs>
@@ -248,43 +269,94 @@ export default function PageDataFlow() {
             </text>
           </g>
 
-          {/* ═══ POWERFUL LASER BEAM ═══ */}
+          {/* ═══ PLASMA LASER BEAM ═══ */}
           <g>
-            {/* Layer 1: Ultra-wide ambient glow */}
+            {/* Origin burst — radial glow at the source point */}
+            <ellipse cx={coreX + 72} cy={coreY} rx="40" ry="50" fill="url(#beamOriginGlow)" opacity="0.8">
+              <animate attributeName="rx" values="35;50;35" dur="1.8s" repeatCount="indefinite" />
+              <animate attributeName="opacity" values="0.6;1;0.6" dur="1.8s" repeatCount="indefinite" />
+            </ellipse>
+
+            {/* Layer 1: Ultra-wide plasma field */}
             <line x1={coreX + 72} y1={coreY} x2="900" y2={coreY}
-              stroke="#C9A84C" strokeWidth="60" opacity="0.04" filter="url(#beamGlow)">
-              <animate attributeName="opacity" values="0.03;0.07;0.03" dur="1.5s" repeatCount="indefinite" />
+              stroke="#C9A84C" strokeWidth="80" opacity="0.03" filter="url(#beamGlow)">
+              <animate attributeName="opacity" values="0.02;0.06;0.02" dur="2s" repeatCount="indefinite" />
             </line>
-            {/* Layer 2: Wide golden haze */}
+            {/* Layer 2: Wide warm haze */}
             <line x1={coreX + 72} y1={coreY} x2="900" y2={coreY}
-              stroke="url(#beamGrad)" strokeWidth="30" opacity="0.12" filter="url(#beamGlow)">
-              <animate attributeName="opacity" values="0.08;0.18;0.08" dur="1.2s" repeatCount="indefinite" />
+              stroke="url(#beamGradWarm)" strokeWidth="45" opacity="0.15" filter="url(#beamGlow)">
+              <animate attributeName="opacity" values="0.1;0.22;0.1" dur="1.3s" repeatCount="indefinite" />
             </line>
-            {/* Layer 3: Focused beam body */}
+            {/* Layer 3: Golden plasma sheath */}
             <line x1={coreX + 72} y1={coreY} x2="900" y2={coreY}
-              stroke="url(#beamGrad)" strokeWidth="10" opacity="0.6" filter="url(#softGlow)">
-              <animate attributeName="opacity" values="0.5;0.8;0.5" dur="0.8s" repeatCount="indefinite" />
+              stroke="url(#beamGrad)" strokeWidth="22" opacity="0.25" filter="url(#beamGlow)">
+              <animate attributeName="opacity" values="0.2;0.35;0.2" dur="0.9s" repeatCount="indefinite" />
             </line>
-            {/* Layer 4: Hot inner beam */}
+            {/* Layer 4: Intense beam body */}
             <line x1={coreX + 72} y1={coreY} x2="900" y2={coreY}
-              stroke="url(#beamGradBright)" strokeWidth="4" opacity="0.9" filter="url(#softGlow)">
-              <animate attributeName="opacity" values="0.7;1;0.7" dur="0.6s" repeatCount="indefinite" />
+              stroke="url(#beamGrad)" strokeWidth="10" opacity="0.7" filter="url(#plasmaGlow)">
+              <animate attributeName="opacity" values="0.6;0.9;0.6" dur="0.6s" repeatCount="indefinite" />
+              <animate attributeName="strokeWidth" values="9;12;9" dur="0.8s" repeatCount="indefinite" />
             </line>
-            {/* Layer 5: White-hot core line */}
+            {/* Layer 5: Hot bright core */}
             <line x1={coreX + 72} y1={coreY} x2="900" y2={coreY}
-              stroke="#FFFDE8" strokeWidth="1.5" opacity="0.8">
-              <animate attributeName="opacity" values="0.5;1;0.5" dur="0.4s" repeatCount="indefinite" />
+              stroke="url(#beamGradBright)" strokeWidth="4" opacity="0.9" filter="url(#plasmaGlow)">
+              <animate attributeName="opacity" values="0.8;1;0.8" dur="0.35s" repeatCount="indefinite" />
+            </line>
+            {/* Layer 6: White-hot plasma core */}
+            <line x1={coreX + 72} y1={coreY} x2="900" y2={coreY}
+              stroke="#FFFDE8" strokeWidth="1.8" opacity="0.95">
+              <animate attributeName="opacity" values="0.7;1;0.7" dur="0.25s" repeatCount="indefinite" />
+              <animate attributeName="strokeWidth" values="1.5;2.5;1.5" dur="0.4s" repeatCount="indefinite" />
             </line>
 
-            {/* Beam flicker particles — fast, bright */}
-            {[0, 0.3, 0.6, 0.9, 1.2, 1.5].map((delay, i) => (
-              <circle key={`bp-${i}`} r={i % 2 === 0 ? 4 : 2.5} fill={i % 3 === 0 ? "#FFF8E1" : "#E2C86A"}
-                opacity="0.9" filter="url(#softGlow)">
-                <animateMotion dur="1.4s" repeatCount="indefinite" begin={`${delay}s`}
-                  path={`M ${coreX + 72},${coreY} L 900,${coreY}`} />
-                <animate attributeName="opacity" values="1;0.2;1" dur="1.4s" repeatCount="indefinite" begin={`${delay}s`} />
+            {/* Plasma jitter lines — slight offset beams for turbulence */}
+            <line x1={coreX + 80} y1={coreY - 1.5} x2="900" y2={coreY - 2}
+              stroke="url(#beamGradBright)" strokeWidth="1" opacity="0.3">
+              <animate attributeName="opacity" values="0.1;0.4;0.1" dur="0.5s" repeatCount="indefinite" />
+              <animate attributeName="y1" values={`${coreY - 1.5};${coreY - 3};${coreY - 1.5}`} dur="0.7s" repeatCount="indefinite" />
+            </line>
+            <line x1={coreX + 80} y1={coreY + 1.5} x2="900" y2={coreY + 2}
+              stroke="url(#beamGradBright)" strokeWidth="1" opacity="0.3">
+              <animate attributeName="opacity" values="0.15;0.35;0.15" dur="0.6s" repeatCount="indefinite" />
+              <animate attributeName="y1" values={`${coreY + 1.5};${coreY + 3};${coreY + 1.5}`} dur="0.8s" repeatCount="indefinite" />
+            </line>
+
+            {/* Plasma spark particles — many, varied speeds and sizes */}
+            {[
+              { delay: 0, r: 5, color: "#FFFFFF", dur: 1.0 },
+              { delay: 0.15, r: 3, color: "#FFF8E1", dur: 1.2 },
+              { delay: 0.3, r: 4, color: "#E2C86A", dur: 0.9 },
+              { delay: 0.45, r: 2.5, color: "#FFFFFF", dur: 1.1 },
+              { delay: 0.6, r: 6, color: "#FFF0C0", dur: 1.3 },
+              { delay: 0.75, r: 2, color: "#E2C86A", dur: 0.8 },
+              { delay: 0.9, r: 3.5, color: "#FFF8E1", dur: 1.0 },
+              { delay: 1.05, r: 4.5, color: "#FFFFFF", dur: 1.4 },
+              { delay: 1.2, r: 2, color: "#C9A84C", dur: 0.7 },
+              { delay: 1.35, r: 3, color: "#FFF0C0", dur: 1.1 },
+            ].map((p, i) => (
+              <circle key={`pp-${i}`} r={p.r} fill={p.color} opacity="0.9" filter="url(#plasmaGlow)">
+                <animateMotion dur={`${p.dur}s`} repeatCount="indefinite" begin={`${p.delay}s`}
+                  path={`M ${coreX + 72},${coreY + (i % 3 - 1) * 2} L 900,${coreY + (i % 5 - 2) * 1.5}`} />
+                <animate attributeName="opacity" values="1;0.1;0" dur={`${p.dur}s`} repeatCount="indefinite" begin={`${p.delay}s`} />
+                <animate attributeName="r" values={`${p.r};${p.r * 0.3};0`} dur={`${p.dur}s`} repeatCount="indefinite" begin={`${p.delay}s`} />
               </circle>
             ))}
+
+            {/* Sparkle bursts near origin */}
+            {[0, 60, 120, 180, 240, 300].map((angle, i) => {
+              const rad = (angle * Math.PI) / 180;
+              const sx = coreX + 72 + Math.cos(rad) * 15;
+              const sy = coreY + Math.sin(rad) * 15;
+              const ex = coreX + 72 + Math.cos(rad) * 35;
+              const ey = coreY + Math.sin(rad) * 25;
+              return (
+                <line key={`spark-${i}`} x1={sx} y1={sy} x2={ex} y2={ey}
+                  stroke="#FFF8E1" strokeWidth="0.8" opacity="0.3" strokeLinecap="round">
+                  <animate attributeName="opacity" values="0;0.5;0" dur={`${1.5 + i * 0.2}s`} repeatCount="indefinite" begin={`${i * 0.25}s`} />
+                </line>
+              );
+            })}
 
             {/* ── CIRCUIT BOARD BRANCHES ── */}
             {/* Upper circuit lines */}
@@ -305,6 +377,24 @@ export default function PageDataFlow() {
               fill="none" stroke="#60A5FA" strokeWidth="0.7" opacity="0.2" strokeLinecap="round" />
             <path d={`M ${coreX + 250} ${coreY + 2} L ${coreX + 270} ${coreY + 72} L 690 ${coreY + 72} L 710 ${coreY + 135} L 840 ${coreY + 135}`}
               fill="none" stroke="#3B82F6" strokeWidth="0.6" opacity="0.18" strokeLinecap="round" />
+
+            {/* Pulse particles running along circuit branches */}
+            {[
+              `M ${coreX + 150},${coreY} L ${coreX + 180},${coreY - 30} L 750,${coreY - 30} L 770,${coreY - 50} L 850,${coreY - 50}`,
+              `M ${coreX + 150},${coreY} L ${coreX + 180},${coreY + 30} L 750,${coreY + 30} L 770,${coreY + 50} L 860,${coreY + 50}`,
+              `M ${coreX + 200},${coreY} L ${coreX + 220},${coreY - 55} L 720,${coreY - 55} L 740,${coreY - 80} L 780,${coreY - 80} L 800,${coreY - 105} L 870,${coreY - 105}`,
+              `M ${coreX + 200},${coreY} L ${coreX + 220},${coreY + 55} L 710,${coreY + 55} L 730,${coreY + 85} L 770,${coreY + 85} L 790,${coreY + 110} L 860,${coreY + 110}`,
+            ].map((path, i) => (
+              <g key={`cp-${i}`}>
+                <circle r="2.5" fill="#60A5FA" opacity="0.8" filter="url(#softGlow)">
+                  <animateMotion dur={`${3 + i * 0.5}s`} repeatCount="indefinite" begin={`${i * 0.8}s`} path={path} />
+                  <animate attributeName="opacity" values="0.5;1;0.5" dur={`${3 + i * 0.5}s`} repeatCount="indefinite" begin={`${i * 0.8}s`} />
+                </circle>
+                <circle r="1.5" fill="#93C5FD" opacity="0.5">
+                  <animateMotion dur={`${3 + i * 0.5}s`} repeatCount="indefinite" begin={`${i * 0.8 + 1.5}s`} path={path} />
+                </circle>
+              </g>
+            ))}
 
             {/* Circuit branch junction dots */}
             {[
@@ -355,16 +445,17 @@ export default function PageDataFlow() {
               </text>
             ))}
 
-            {/* Scattered floating particles in the beam field */}
-            {Array.from({ length: 12 }).map((_, i) => {
-              const px = coreX + 100 + Math.random() * 250;
-              const py = coreY - 80 + Math.random() * 160;
+            {/* Scattered floating particles */}
+            {Array.from({ length: 20 }).map((_, i) => {
+              const px = coreX + 90 + (i * 37) % 280;
+              const py = coreY - 100 + (i * 23) % 200;
+              const r = 0.8 + (i % 4) * 0.5;
               return (
-                <circle key={`sp-${i}`} cx={px} cy={py} r={1 + Math.random() * 1.5}
-                  fill="#60A5FA" opacity={0.15 + Math.random() * 0.2}>
+                <circle key={`sp-${i}`} cx={px} cy={py} r={r}
+                  fill={i % 3 === 0 ? "#C9A84C" : "#60A5FA"} opacity={0.15 + (i % 5) * 0.04}>
                   <animate attributeName="opacity"
-                    values={`${0.1 + Math.random() * 0.1};${0.3 + Math.random() * 0.2};${0.1 + Math.random() * 0.1}`}
-                    dur={`${2 + Math.random() * 3}s`} repeatCount="indefinite" />
+                    values={`${0.08 + (i % 3) * 0.05};${0.3 + (i % 4) * 0.05};${0.08 + (i % 3) * 0.05}`}
+                    dur={`${2 + (i % 5) * 0.6}s`} repeatCount="indefinite" />
                 </circle>
               );
             })}
