@@ -195,7 +195,7 @@ export default function PageAdmin() {
         animate={{ opacity: 1, y: 0 }}
         className="bg-surface border border-border rounded-xl overflow-hidden mb-5"
       >
-        <div className="hidden sm:grid grid-cols-[1fr_100px_130px_150px_120px_140px] gap-2 px-5 py-3 bg-card border-b border-border text-xs font-semibold text-text-dim">
+        <div className="hidden sm:grid grid-cols-[minmax(150px,1fr)_80px_100px_120px_100px_120px] gap-2 px-5 py-3 bg-card border-b border-border text-xs font-semibold text-text-dim items-center">
           <span>Пользователь</span>
           <span className="text-center">Роль</span>
           <span className="text-center">Видит общую статистику</span>
@@ -210,7 +210,7 @@ export default function PageAdmin() {
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: i * 0.08 }}
-            className={`grid grid-cols-1 sm:grid-cols-[1fr_100px_130px_150px_120px_140px] gap-3 sm:gap-2 px-4 sm:px-5 py-4 items-center ${
+            className={`grid grid-cols-1 sm:grid-cols-[minmax(150px,1fr)_80px_100px_120px_100px_120px] gap-2 px-4 sm:px-5 py-4 items-center ${
               i < users.length - 1 ? "border-b border-border" : ""
             } hover:bg-card/40 transition-colors`}
           >
