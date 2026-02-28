@@ -116,6 +116,23 @@ export default function PageDataFlow() {
               <stop offset="0%" stopColor="#EF4444" stopOpacity="0.4" />
               <stop offset="100%" stopColor="#EF4444" stopOpacity="0.15" />
             </linearGradient>
+            {/* Beam gradient */}
+            <linearGradient id="beamGrad" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stopColor="#C9A84C" stopOpacity="1" />
+              <stop offset="30%" stopColor="#E2C86A" stopOpacity="0.7" />
+              <stop offset="70%" stopColor="#60A5FA" stopOpacity="0.3" />
+              <stop offset="100%" stopColor="#3B82F6" stopOpacity="0" />
+            </linearGradient>
+            <linearGradient id="beamGradBright" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stopColor="#FFF8E1" stopOpacity="0.9" />
+              <stop offset="20%" stopColor="#E2C86A" stopOpacity="0.6" />
+              <stop offset="60%" stopColor="#93C5FD" stopOpacity="0.15" />
+              <stop offset="100%" stopColor="#3B82F6" stopOpacity="0" />
+            </linearGradient>
+            <filter id="beamGlow">
+              <feGaussianBlur stdDeviation="6" result="b" />
+              <feMerge><feMergeNode in="b" /><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
+            </filter>
           </defs>
 
           {/* ═══ FLOW PIPES ═══ */}
@@ -253,6 +270,81 @@ export default function PageDataFlow() {
               (AI Engine)
             </text>
           </g>
+
+          {/* ═══ NEURAL BEAM FROM CORE ═══ */}
+          <g>
+            {/* Wide soft beam glow */}
+            <path d={`M ${coreX + 78} ${coreY} Q ${coreX + 200} ${coreY}, 900 ${coreY}`}
+              fill="none" stroke="url(#beamGrad)" strokeWidth="28" opacity="0.15" filter="url(#beamGlow)">
+              <animate attributeName="opacity" values="0.1;0.2;0.1" dur="2.5s" repeatCount="indefinite" />
+            </path>
+            {/* Medium beam */}
+            <path d={`M ${coreX + 78} ${coreY} Q ${coreX + 200} ${coreY}, 900 ${coreY}`}
+              fill="none" stroke="url(#beamGrad)" strokeWidth="8" opacity="0.5" filter="url(#softGlow)">
+              <animate attributeName="opacity" values="0.4;0.7;0.4" dur="2s" repeatCount="indefinite" />
+            </path>
+            {/* Bright core beam */}
+            <path d={`M ${coreX + 78} ${coreY} Q ${coreX + 200} ${coreY}, 900 ${coreY}`}
+              fill="none" stroke="url(#beamGradBright)" strokeWidth="2" opacity="0.8">
+              <animate attributeName="opacity" values="0.6;1;0.6" dur="1.8s" repeatCount="indefinite" />
+            </path>
+
+            {/* Neural network branches */}
+            {/* Upper branches */}
+            <path d={`M ${coreX + 180} ${coreY - 5} L 780 ${coreY - 60} L 850 ${coreY - 60}`}
+              fill="none" stroke="#3B82F6" strokeWidth="1.2" opacity="0.3" strokeLinecap="round" />
+            <path d={`M ${coreX + 220} ${coreY - 8} L 760 ${coreY - 110} L 830 ${coreY - 130}`}
+              fill="none" stroke="#3B82F6" strokeWidth="0.8" opacity="0.2" strokeLinecap="round" />
+            <path d={`M ${coreX + 260} ${coreY - 3} L 800 ${coreY - 35} L 880 ${coreY - 40}`}
+              fill="none" stroke="#60A5FA" strokeWidth="0.8" opacity="0.25" strokeLinecap="round" />
+            {/* Lower branches */}
+            <path d={`M ${coreX + 180} ${coreY + 5} L 780 ${coreY + 55} L 860 ${coreY + 55}`}
+              fill="none" stroke="#3B82F6" strokeWidth="1.2" opacity="0.3" strokeLinecap="round" />
+            <path d={`M ${coreX + 220} ${coreY + 8} L 750 ${coreY + 100} L 840 ${coreY + 120}`}
+              fill="none" stroke="#3B82F6" strokeWidth="0.8" opacity="0.2" strokeLinecap="round" />
+            <path d={`M ${coreX + 260} ${coreY + 3} L 810 ${coreY + 30} L 890 ${coreY + 25}`}
+              fill="none" stroke="#60A5FA" strokeWidth="0.8" opacity="0.25" strokeLinecap="round" />
+
+            {/* Branch endpoint dots */}
+            {[
+              { x: 850, y: coreY - 60 }, { x: 830, y: coreY - 130 }, { x: 880, y: coreY - 40 },
+              { x: 860, y: coreY + 55 }, { x: 840, y: coreY + 120 }, { x: 890, y: coreY + 25 },
+            ].map((dot, i) => (
+              <circle key={`nd-${i}`} cx={dot.x} cy={dot.y} r="3" fill="#60A5FA" opacity="0.5">
+                <animate attributeName="opacity" values="0.3;0.8;0.3" dur={`${2 + i * 0.3}s`} repeatCount="indefinite" />
+                <animate attributeName="r" values="2;4;2" dur={`${2 + i * 0.3}s`} repeatCount="indefinite" />
+              </circle>
+            ))}
+
+            {/* Pulse particles along the beam */}
+            <circle r="5" fill="#C9A84C" opacity="0.9" filter="url(#softGlow)">
+              <animateMotion dur="2s" repeatCount="indefinite" path={`M ${coreX + 78},${coreY} L 900,${coreY}`} />
+              <animate attributeName="r" values="5;2;5" dur="2s" repeatCount="indefinite" />
+              <animate attributeName="opacity" values="0.9;0.3;0.9" dur="2s" repeatCount="indefinite" />
+            </circle>
+            <circle r="3" fill="#FFF8E1" opacity="0.7">
+              <animateMotion dur="2s" repeatCount="indefinite" begin="0.7s" path={`M ${coreX + 78},${coreY} L 900,${coreY}`} />
+              <animate attributeName="opacity" values="0.7;0.2;0.7" dur="2s" repeatCount="indefinite" begin="0.7s" />
+            </circle>
+            <circle r="4" fill="#E2C86A" opacity="0.6" filter="url(#softGlow)">
+              <animateMotion dur="2.5s" repeatCount="indefinite" begin="1.3s" path={`M ${coreX + 78},${coreY} L 900,${coreY}`} />
+            </circle>
+
+            {/* Floating binary/data particles near branches */}
+            {[
+              { x: 750, y: coreY - 50, text: "101001" },
+              { x: 800, y: coreY + 40, text: "010110" },
+              { x: 720, y: coreY - 90, text: "110010" },
+              { x: 770, y: coreY + 85, text: "001101" },
+            ].map((d, i) => (
+              <text key={`bin-${i}`} x={d.x} y={d.y} fontSize="8" fill="#3B82F6" opacity="0.15"
+                fontFamily="'JetBrains Mono', monospace">
+                <animate attributeName="opacity" values="0.08;0.25;0.08" dur={`${3 + i * 0.5}s`} repeatCount="indefinite" />
+                {d.text}
+              </text>
+            ))}
+          </g>
+
         </svg>
 
         {/* ═══ RECONNECT BUTTONS (HTML overlay) ═══ */}
