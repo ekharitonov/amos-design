@@ -15,8 +15,6 @@ const nav = [
   { id: "team", label: "Команда" },
   { id: "iznanka", label: "Изнанка" },
   { id: "ritual", label: "Ritual Prep" },
-  { id: "dataflow", label: "Data Flow" },
-  { id: "admin", label: "Admin" },
   { id: "settings", label: "Настройки" },
 ];
 
@@ -26,9 +24,16 @@ const layers = [
   { id: "bridges", label: "Мосты" },
 ];
 
+const settingsLayers = [
+  { id: "general", label: "Общие" },
+  { id: "dataflow", label: "Data Flow" },
+  { id: "admin", label: "Admin & Ethics" },
+];
+
 export default function Dashboard() {
   const [page, setPage] = useState("main");
   const [layer, setLayer] = useState("masks");
+  const [settingsLayer, setSettingsLayer] = useState("general");
 
   const content = () => {
     switch (page) {
@@ -39,9 +44,10 @@ export default function Dashboard() {
         if (layer === "osnova") return <PageOsnova />;
         return <PageBridges />;
       case "ritual": return <PageRitualPrep />;
-      case "dataflow": return <PageDataFlow />;
-      case "admin": return <PageAdmin />;
-      case "settings": return <PageSettings />;
+      case "settings":
+        if (settingsLayer === "dataflow") return <PageDataFlow />;
+        if (settingsLayer === "admin") return <PageAdmin />;
+        return <PageSettings />;
       default: return <PageMain />;
     }
   };
@@ -61,7 +67,7 @@ export default function Dashboard() {
         <div className="flex shrink-0">
           {nav.map(n => (
             <button key={n.id}
-              onClick={() => { setPage(n.id); if (n.id === "iznanka") setLayer("masks"); }}
+              onClick={() => { setPage(n.id); if (n.id === "iznanka") setLayer("masks"); if (n.id === "settings") setSettingsLayer("general"); }}
               className={`relative bg-transparent border-none cursor-pointer px-2.5 sm:px-4 py-[17px] text-xs sm:text-sm whitespace-nowrap transition-colors ${
                 page === n.id ? "font-semibold text-foreground" : "text-text-dim hover:text-foreground"
               }`}
@@ -87,6 +93,24 @@ export default function Dashboard() {
               {l.label}
               <div className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 rounded-sm bg-primary transition-all duration-200 ${
                 layer === l.id ? "w-[70%]" : "w-0"
+              }`} />
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* SETTINGS SUB-NAV */}
+      {page === "settings" && (
+        <div className="flex px-3 sm:px-7 bg-secondary border-b border-border animate-fade-in overflow-x-auto">
+          {settingsLayers.map(l => (
+            <button key={l.id} onClick={() => setSettingsLayer(l.id)}
+              className={`relative bg-transparent border-none cursor-pointer px-3 sm:px-4 py-3 text-xs sm:text-[13px] whitespace-nowrap transition-colors ${
+                settingsLayer === l.id ? "font-semibold text-primary" : "text-muted-foreground hover:text-text-dim"
+              }`}
+            >
+              {l.label}
+              <div className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 rounded-sm bg-primary transition-all duration-200 ${
+                settingsLayer === l.id ? "w-[70%]" : "w-0"
               }`} />
             </button>
           ))}
