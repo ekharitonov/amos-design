@@ -213,52 +213,72 @@ export default function PageDataFlow() {
 
           {/* ═══ CORE AMOS ENGINE ═══ */}
           <g className="cursor-pointer">
-            {/* Outer rotating dashed ring */}
-            <circle cx={coreX} cy={coreY} r="110" fill="none" stroke="#3B82F6" strokeWidth="1"
-              strokeDasharray="8 6" opacity="0.25">
+            {/* ── VISIBLE ORBIT 1 (outermost) ── */}
+            <circle cx={coreX} cy={coreY} r="115" fill="none" stroke="#3B82F6" strokeWidth="0.7" opacity="0.35" />
+            {/* Rotating dashes on orbit 1 */}
+            <circle cx={coreX} cy={coreY} r="115" fill="none" stroke="#60A5FA" strokeWidth="1"
+              strokeDasharray="3 20" opacity="0.2">
               <animateTransform attributeName="transform" type="rotate"
                 from={`0 ${coreX} ${coreY}`} to={`360 ${coreX} ${coreY}`} dur="30s" repeatCount="indefinite" />
             </circle>
-            {/* Second ring - counter rotation */}
-            <circle cx={coreX} cy={coreY} r="98" fill="none" stroke="#3B82F6" strokeWidth="0.8"
-              strokeDasharray="4 8" opacity="0.15">
+            {/* Orbiting objects on orbit 1 */}
+            <circle r="5" fill="#60A5FA" opacity="0.9" filter="url(#softGlow)">
+              <animateMotion dur="8s" repeatCount="indefinite"
+                path={`M ${coreX},${coreY - 115} A 115,115 0 1,1 ${coreX - 0.01},${coreY - 115}`} />
+            </circle>
+            <circle r="3" fill="#93C5FD" opacity="0.7">
+              <animateMotion dur="8s" repeatCount="indefinite" begin="4s"
+                path={`M ${coreX},${coreY - 115} A 115,115 0 1,1 ${coreX - 0.01},${coreY - 115}`} />
+            </circle>
+            <rect width="6" height="6" rx="1" fill="#C9A84C" opacity="0.8" filter="url(#softGlow)">
+              <animateMotion dur="12s" repeatCount="indefinite"
+                path={`M ${coreX + 115},${coreY} A 115,115 0 1,1 ${coreX + 114.99},${coreY}`} />
+              <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="4s" repeatCount="indefinite" />
+            </rect>
+
+            {/* ── VISIBLE ORBIT 2 (middle) ── */}
+            <circle cx={coreX} cy={coreY} r="95" fill="none" stroke="#3B82F6" strokeWidth="0.5" opacity="0.3" />
+            <circle cx={coreX} cy={coreY} r="95" fill="none" stroke="#3B82F6" strokeWidth="0.8"
+              strokeDasharray="5 12" opacity="0.15">
               <animateTransform attributeName="transform" type="rotate"
                 from={`360 ${coreX} ${coreY}`} to={`0 ${coreX} ${coreY}`} dur="22s" repeatCount="indefinite" />
             </circle>
-            {/* Third ring - fast orbit dots */}
-            <circle cx={coreX} cy={coreY} r="88" fill="none" stroke="#60A5FA" strokeWidth="0.6"
-              strokeDasharray="2 14" opacity="0.3">
-              <animateTransform attributeName="transform" type="rotate"
-                from={`0 ${coreX} ${coreY}`} to={`360 ${coreX} ${coreY}`} dur="12s" repeatCount="indefinite" />
+            {/* Orbiting objects on orbit 2 */}
+            <circle r="4" fill="#3B82F6" opacity="0.85" filter="url(#softGlow)">
+              <animateMotion dur="6s" repeatCount="indefinite"
+                path={`M ${coreX - 95},${coreY} A 95,95 0 1,0 ${coreX - 94.99},${coreY}`} />
             </circle>
+            <polygon points="0,-4 3.5,2 -3.5,2" fill="#E2C86A" opacity="0.8" filter="url(#softGlow)">
+              <animateMotion dur="9s" repeatCount="indefinite" begin="2s"
+                path={`M ${coreX},${coreY + 95} A 95,95 0 1,1 ${coreX + 0.01},${coreY + 95}`} />
+              <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="3s" repeatCount="indefinite" />
+            </polygon>
+            <circle r="2.5" fill="#93C5FD" opacity="0.6">
+              <animateMotion dur="6s" repeatCount="indefinite" begin="3s"
+                path={`M ${coreX - 95},${coreY} A 95,95 0 1,0 ${coreX - 94.99},${coreY}`} />
+            </circle>
+
+            {/* ── VISIBLE ORBIT 3 (inner) ── */}
+            <circle cx={coreX} cy={coreY} r="88" fill="none" stroke="#60A5FA" strokeWidth="0.4" opacity="0.25" />
+            <circle cx={coreX} cy={coreY} r="88" fill="none" stroke="#60A5FA" strokeWidth="0.6"
+              strokeDasharray="2 16" opacity="0.2">
+              <animateTransform attributeName="transform" type="rotate"
+                from={`0 ${coreX} ${coreY}`} to={`360 ${coreX} ${coreY}`} dur="14s" repeatCount="indefinite" />
+            </circle>
+            {/* Orbiting objects on orbit 3 */}
+            <circle r="3.5" fill="#C9A84C" opacity="0.8" filter="url(#softGlow)">
+              <animateMotion dur="5s" repeatCount="indefinite"
+                path={`M ${coreX},${coreY - 88} A 88,88 0 1,1 ${coreX - 0.01},${coreY - 88}`} />
+            </circle>
+            <circle r="2" fill="#60A5FA" opacity="0.5">
+              <animateMotion dur="5s" repeatCount="indefinite" begin="2.5s"
+                path={`M ${coreX},${coreY - 88} A 88,88 0 1,1 ${coreX - 0.01},${coreY - 88}`} />
+            </circle>
+
             {/* Pulsing outer glow */}
             <circle cx={coreX} cy={coreY} r="85" fill="#3B82F6" opacity="0.03">
-              <animate attributeName="r" values="80;95;80" dur="4s" repeatCount="indefinite" />
+              <animate attributeName="r" values="80;100;80" dur="4s" repeatCount="indefinite" />
               <animate attributeName="opacity" values="0.03;0.08;0.03" dur="4s" repeatCount="indefinite" />
-            </circle>
-            {/* Main outer circle */}
-            <circle cx={coreX} cy={coreY} r="78" fill="hsl(220 20% 7%)" stroke="#3B82F6"
-              strokeWidth="2.5" filter="url(#softGlow)" />
-            {/* Inner glow circle */}
-            <circle cx={coreX} cy={coreY} r="70" fill="#3B82F6" opacity="0.04">
-              <animate attributeName="r" values="65;74;65" dur="3.5s" repeatCount="indefinite" />
-              <animate attributeName="opacity" values="0.04;0.12;0.04" dur="3.5s" repeatCount="indefinite" />
-            </circle>
-            {/* Inner ring */}
-            <circle cx={coreX} cy={coreY} r="58" fill="none" stroke="#3B82F6" strokeWidth="0.5" opacity="0.2" />
-            {/* Brain - larger with glow */}
-            <image href={brainImg} x={coreX - 54} y={coreY - 54} width="108" height="108" filter="url(#bigGlow)">
-              <animate attributeName="opacity" values="0.85;1;0.85" dur="3s" repeatCount="indefinite" />
-            </image>
-            {/* Orbiting dots */}
-            <circle r="4" fill="#60A5FA" opacity="0.8" filter="url(#softGlow)">
-              <animateMotion dur="6s" repeatCount="indefinite" path={`M ${coreX + 88},${coreY} A 88,88 0 1,1 ${coreX + 87.99},${coreY}`} />
-            </circle>
-            <circle r="3" fill="#93C5FD" opacity="0.6">
-              <animateMotion dur="8s" repeatCount="indefinite" path={`M ${coreX - 88},${coreY} A 88,88 0 1,0 ${coreX - 87.99},${coreY}`} />
-            </circle>
-            <circle r="2.5" fill="#C9A84C" opacity="0.7" filter="url(#softGlow)">
-              <animateMotion dur="10s" repeatCount="indefinite" path={`M ${coreX},${coreY + 98} A 98,98 0 1,1 ${coreX + 0.01},${coreY + 98}`} />
             </circle>
             {/* Labels */}
             <text x={coreX} y={coreY + 92} textAnchor="middle"
