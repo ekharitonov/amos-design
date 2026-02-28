@@ -219,7 +219,7 @@ export default function PageDataFlow() {
             {/* Inner ring */}
             <circle cx={coreX} cy={coreY} r="48" fill="none" stroke="#3B82F6" strokeWidth="0.5" opacity="0.2" />
             {/* Brain */}
-            <image href={brainImg} x={coreX - 32} y={coreY - 32} width="64" height="64" />
+            <image href={brainImg} x={coreX - 44} y={coreY - 44} width="88" height="88" filter="url(#softGlow)" />
             {/* Labels */}
             <text x={coreX} y={coreY + 78} textAnchor="middle"
               fill="#E8E8F0" fontSize="16" fontWeight="700" fontFamily="'Playfair Display', serif">
