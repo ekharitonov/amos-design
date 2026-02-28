@@ -195,37 +195,60 @@ export default function PageDataFlow() {
           })}
 
           {/* ═══ CORE AMOS ENGINE ═══ */}
-          <g>
+          <g className="cursor-pointer">
             {/* Outer rotating dashed ring */}
-            <circle cx={coreX} cy={coreY} r="95" fill="none" stroke="#3B82F6" strokeWidth="1"
+            <circle cx={coreX} cy={coreY} r="110" fill="none" stroke="#3B82F6" strokeWidth="1"
               strokeDasharray="8 6" opacity="0.25">
               <animateTransform attributeName="transform" type="rotate"
                 from={`0 ${coreX} ${coreY}`} to={`360 ${coreX} ${coreY}`} dur="30s" repeatCount="indefinite" />
             </circle>
             {/* Second ring - counter rotation */}
-            <circle cx={coreX} cy={coreY} r="82" fill="none" stroke="#3B82F6" strokeWidth="0.8"
+            <circle cx={coreX} cy={coreY} r="98" fill="none" stroke="#3B82F6" strokeWidth="0.8"
               strokeDasharray="4 8" opacity="0.15">
               <animateTransform attributeName="transform" type="rotate"
                 from={`360 ${coreX} ${coreY}`} to={`0 ${coreX} ${coreY}`} dur="22s" repeatCount="indefinite" />
             </circle>
+            {/* Third ring - fast orbit dots */}
+            <circle cx={coreX} cy={coreY} r="88" fill="none" stroke="#60A5FA" strokeWidth="0.6"
+              strokeDasharray="2 14" opacity="0.3">
+              <animateTransform attributeName="transform" type="rotate"
+                from={`0 ${coreX} ${coreY}`} to={`360 ${coreX} ${coreY}`} dur="12s" repeatCount="indefinite" />
+            </circle>
+            {/* Pulsing outer glow */}
+            <circle cx={coreX} cy={coreY} r="85" fill="#3B82F6" opacity="0.03">
+              <animate attributeName="r" values="80;95;80" dur="4s" repeatCount="indefinite" />
+              <animate attributeName="opacity" values="0.03;0.08;0.03" dur="4s" repeatCount="indefinite" />
+            </circle>
             {/* Main outer circle */}
-            <circle cx={coreX} cy={coreY} r="68" fill="hsl(220 20% 7%)" stroke="#3B82F6"
+            <circle cx={coreX} cy={coreY} r="78" fill="hsl(220 20% 7%)" stroke="#3B82F6"
               strokeWidth="2.5" filter="url(#softGlow)" />
             {/* Inner glow circle */}
-            <circle cx={coreX} cy={coreY} r="58" fill="#3B82F6" opacity="0.04">
-              <animate attributeName="r" values="55;62;55" dur="3.5s" repeatCount="indefinite" />
-              <animate attributeName="opacity" values="0.04;0.1;0.04" dur="3.5s" repeatCount="indefinite" />
+            <circle cx={coreX} cy={coreY} r="70" fill="#3B82F6" opacity="0.04">
+              <animate attributeName="r" values="65;74;65" dur="3.5s" repeatCount="indefinite" />
+              <animate attributeName="opacity" values="0.04;0.12;0.04" dur="3.5s" repeatCount="indefinite" />
             </circle>
             {/* Inner ring */}
-            <circle cx={coreX} cy={coreY} r="48" fill="none" stroke="#3B82F6" strokeWidth="0.5" opacity="0.2" />
-            {/* Brain */}
-            <image href={brainImg} x={coreX - 44} y={coreY - 44} width="88" height="88" filter="url(#softGlow)" />
+            <circle cx={coreX} cy={coreY} r="58" fill="none" stroke="#3B82F6" strokeWidth="0.5" opacity="0.2" />
+            {/* Brain - larger with glow */}
+            <image href={brainImg} x={coreX - 54} y={coreY - 54} width="108" height="108" filter="url(#bigGlow)">
+              <animate attributeName="opacity" values="0.85;1;0.85" dur="3s" repeatCount="indefinite" />
+            </image>
+            {/* Orbiting dots */}
+            <circle r="4" fill="#60A5FA" opacity="0.8" filter="url(#softGlow)">
+              <animateMotion dur="6s" repeatCount="indefinite" path={`M ${coreX + 88},${coreY} A 88,88 0 1,1 ${coreX + 87.99},${coreY}`} />
+            </circle>
+            <circle r="3" fill="#93C5FD" opacity="0.6">
+              <animateMotion dur="8s" repeatCount="indefinite" path={`M ${coreX - 88},${coreY} A 88,88 0 1,0 ${coreX - 87.99},${coreY}`} />
+            </circle>
+            <circle r="2.5" fill="#C9A84C" opacity="0.7" filter="url(#softGlow)">
+              <animateMotion dur="10s" repeatCount="indefinite" path={`M ${coreX},${coreY + 98} A 98,98 0 1,1 ${coreX + 0.01},${coreY + 98}`} />
+            </circle>
             {/* Labels */}
-            <text x={coreX} y={coreY + 78} textAnchor="middle"
+            <text x={coreX} y={coreY + 92} textAnchor="middle"
               fill="#E8E8F0" fontSize="16" fontWeight="700" fontFamily="'Playfair Display', serif">
               Ядро АМОС
             </text>
-            <text x={coreX} y={coreY + 96} textAnchor="middle"
+            <text x={coreX} y={coreY + 110} textAnchor="middle"
               fill="#6B6B80" fontSize="12" fontFamily="'Playfair Display', serif">
               (AI Engine)
             </text>
