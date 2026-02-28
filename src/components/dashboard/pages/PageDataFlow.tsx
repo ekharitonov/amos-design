@@ -2,16 +2,23 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 /* ─── Integrations ─── */
-const integrations = [
-  { name: "Slack", icon: "💬", status: "ok" as const, statusText: "Подключено: 15 мин назад (OK)", y: 70 },
-  { name: "Jira", icon: "📋", status: "ok" as const, statusText: "Подключено: 10 мин назад (OK)", y: 210 },
-  { name: "Zoom", icon: "🎥", status: "processing" as const, statusText: "Синхронизация... (Processing)", y: 350 },
-  { name: "Corporate Email", icon: "✉️", status: "error" as const, statusText: "Ошибка доступа (Red Error)", y: 490 },
+interface Integration {
+  name: string;
+  icon: string;
+  status: "ok" | "processing" | "error";
+  statusText: string;
+  y: number;
+}
+
+const initialIntegrations: Integration[] = [
+  { name: "Slack", icon: "💬", status: "ok", statusText: "Подключено: 15 мин назад (OK)", y: 70 },
+  { name: "Jira", icon: "📋", status: "ok", statusText: "Подключено: 10 мин назад (OK)", y: 210 },
+  { name: "Zoom", icon: "🎥", status: "processing", statusText: "Синхронизация... (Processing)", y: 350 },
+  { name: "Corporate Email", icon: "✉️", status: "error", statusText: "Ошибка доступа (Red Error)", y: 490 },
 ];
 
 const statusDotColor = { ok: "#22C55E", processing: "#C9A84C", error: "#EF4444" };
 const statusTextColor = { ok: "#22C55E", processing: "#C9A84C", error: "#EF4444" };
-const statusEmoji = { ok: "✅", processing: "ℹ️", error: "⚠️" };
 
 /* ─── Log ─── */
 const logEntries = [
@@ -47,7 +54,21 @@ function Counter({ target, label }: { target: number; label: string }) {
 
 export default function PageDataFlow() {
   const [termOpen, setTermOpen] = useState(true);
+  const [integrations, setIntegrations] = useState(initialIntegrations);
+  const [reconnecting, setReconnecting] = useState<string | null>(null);
 
+  const handleReconnect = (name: string) => {
+    setReconnecting(name);
+    setIntegrations(prev => prev.map(i =>
+      i.name === name ? { ...i, status: "processing" as const, statusText: "Переподключение..." } : i
+    ));
+    setTimeout(() => {
+      setIntegrations(prev => prev.map(i =>
+        i.name === name ? { ...i, status: "ok" as const, statusText: "Подключено: только что (OK)" } : i
+      ));
+      setReconnecting(null);
+    }, 3000);
+  };
   const coreX = 580;
   const coreY = 290;
 
@@ -209,6 +230,27 @@ export default function PageDataFlow() {
             </text>
           </g>
         </svg>
+
+        {/* ═══ RECONNECT BUTTONS (HTML overlay) ═══ */}
+        {integrations.map((integ) => {
+          if (integ.status !== "error") return null;
+          const topPercent = ((integ.y + 55) / 600) * 100;
+          return (
+            <motion.button
+              key={`reconnect-${integ.name}`}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => handleReconnect(integ.name)}
+              disabled={reconnecting === integ.name}
+              className="absolute z-20 px-3 py-1.5 text-[10px] sm:text-xs font-mono-brand font-semibold rounded-md bg-destructive/15 border border-destructive/30 text-destructive hover:bg-destructive/25 transition-colors disabled:opacity-50"
+              style={{ left: "4%", top: `${topPercent}%` }}
+            >
+              {reconnecting === integ.name ? "⟳ Connecting..." : "🔄 Reconnect"}
+            </motion.button>
+          );
+        })}
 
         {/* ═══ STATS OVERLAY (top-right) ═══ */}
         <motion.div
